@@ -6,7 +6,7 @@ subtitle: <a href='https://mrsd.ri.cmu.edu'>MRSD</a> @ Carnegie Mellon Universit
 
 profile:
   align: right
-  image: hhy_id_alaska_square_lld.jpeg
+  image: prof_pic.jpg
   image_circular: false # crops the image to make it circular
   more_info: #>
     # <p>555 your office number</p>
