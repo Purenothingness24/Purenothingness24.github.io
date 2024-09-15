@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='https://mrsd.ri.cmu.edu'>MRSD</a> @ Carnegie Mellon University Robotics Institute
+subtitle: <a href='https://mrsd.ri.cmu.edu'>MRSD</a> @ CMU Robotics Institute
 
 profile:
   align: right
@@ -19,8 +19,8 @@ selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
+Hi! My name is 何昊洋 (hé hào yáng). I'm a current graduate student in the [Robotics Institute](https://www.ri.cmu.edu) at Carnegie Mellon University School of Computer Science, pursuing the degree of [Masters in Robotic Systems Development (MRSD)](https://mrsd.ri.cmu.edu). My capstone project is centered around building a safe human-interactive autonomous wheelchair system, working with [Cherie Ho](https://cherieho.com) and [Sebastian Scherer](https://theairlab.org/team/sebastian) at the [AirLab](https://theairlab.org). I'm also working as teaching assistant for CMU [Machine Learning Department](https://www.ml.cmu.edu) and [Language Technologies Institute](https://www.lti.cs.cmu.edu).
 
-Put your address / P.O. box / other info right below your picture. You can also disable any of these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
+Previously, I obtained my [Integrated M.S./B.S. in Electrical and Computer Engineering](https://www.ece.cmu.edu/academics/integrated.html) here at CMU within 4 years, during which I interned at [Apple](https://www.apple.com) and [Bilibili](https://www.bilibili.com).
 
-Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
+My research interests include multimodal machine learning, visual generation, and reinforcement learning, centered around multimodal learning for human-interactive robotic systems and generating embodied training data for these applications.
