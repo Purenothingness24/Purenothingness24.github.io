@@ -1,6 +1,6 @@
 ---
 layout: about
-title: about
+title: About
 permalink: /
 subtitle: <a href='https://mrsd.ri.cmu.edu'>MRSD</a> @ CMU Robotics Institute
 
@@ -19,7 +19,7 @@ selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-Hi! My name is 何昊洋 (hé hào yáng). I'm a current graduate student in the [Robotics Institute](https://www.ri.cmu.edu) at Carnegie Mellon University School of Computer Science, pursuing the degree of [Masters in Robotic Systems Development (MRSD)](https://mrsd.ri.cmu.edu). My capstone project is centered around building a safe human-interactive autonomous wheelchair system, working with [Cherie Ho](https://cherieho.com) and [Sebastian Scherer](https://theairlab.org/team/sebastian) at the [AirLab](https://theairlab.org). I'm also working as teaching assistant for CMU [Machine Learning Department](https://www.ml.cmu.edu) and [Language Technologies Institute](https://www.lti.cs.cmu.edu).
+Hi! My name is 何昊洋 (hé hào yáng). I'm pursuing [Masters in Robotic Systems Development (MRSD)](https://mrsd.ri.cmu.edu) in the [Robotics Institute](https://www.ri.cmu.edu) of Carnegie Mellon University School of Computer Science. My ongoing capstone project is centered around building a safe human-interactive autonomous wheelchair system, working with [Cherie Ho](https://cherieho.com) and [Sebastian Scherer](https://theairlab.org/team/sebastian) at the [AirLab](https://theairlab.org).
 
 Previously, I obtained my [Integrated M.S./B.S. in Electrical and Computer Engineering](https://www.ece.cmu.edu/academics/integrated.html) here at CMU within 4 years, during which I interned at [Apple](https://www.apple.com) and [Bilibili](https://www.bilibili.com).
 
