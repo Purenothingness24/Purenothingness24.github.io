@@ -9,8 +9,11 @@ nav_order: 6
 
 ### Carnegie Mellon University
 
+Teaching Assistant: [11-777 Multimodal Machine Learning, Spring 2025](https://purenothingness24.github.io/teaching/)
+- Responsible for students with course projects focusing on embodiment and multimodal robotics. 
+
 Teaching Assistant: [11-777 Multimodal Machine Learning, Fall 2024](https://cmu-mmml.github.io/fall2024/)
-- Mentoring students with course projects focusing on embodiment and multimodal robotics. 
+- Responsible for students with course projects focusing on embodiment and multimodal robotics. 
 
 Teaching Assistant: [10-423/623 Generative AI, Fall 2024](https://www.cs.cmu.edu/~mgormley/courses/10423/)
 - Leading TA team on Homework 0 PyTorch & WandB Fundamentals.
