@@ -16,8 +16,8 @@ Teaching Assistant: [11-777 Multimodal Machine Learning, Fall 2024](https://cmu-
 - Responsible for students with course projects focusing on embodiment and multimodal robotics. 
 
 Teaching Assistant: [10-423/623 Generative AI, Fall 2024](https://www.cs.cmu.edu/~mgormley/courses/10423/)
-- Leading TA team on Homework 0 PyTorch & WandB Fundamentals.
-- Leading TA team on Homework 4 Multimodal Foundation Models and teaching relevant recitation.
+- Led TA team on Homework 0 PyTorch & WandB Fundamentals.
+- Led TA team on Homework 4 Multimodal Foundation Models and teaching relevant recitation.
 
 Teaching Assistant: [10-423/623 Generative AI, Spring 2024](https://www.cs.cmu.edu/~mgormley/courses/10423/)
 - Taught Recitation 0 on WandB Fundamentals.
