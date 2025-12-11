@@ -21,6 +21,13 @@
   month={December},
   pdf={anywill.pdf},
   selected={true},
+  abstract={Uneven, cluttered sidewalks and constant steering impose significant physical and cognitive load on wheelchair users. This report presents AnyWill, an outdoor, user-interactive autonomous wheelchair designed to provide end-to-end mobility on urban sidewalks while respecting individual preferences. The system retrofits a commercial powered wheelchair with a ZED-X RGB-D camera, dual-antenna RTK GNSS/IMU, and a Jetson AGX Orin running ROS 2. Visual and geometric features from first-person images and point clouds are fused into a learned bird’s-eye-view costmap using an inverse reinforcement learning model trained on expert teleoperation, capturing subtle terrain semantics such
+as curbs, rough pavement, and compliant surfaces. On top of this costmap, a global planner uses an
+OpenStreetMap-based wheelchair-accessible map, and a model predictive path integral local planner
+replans at 2 Hz to generate safe, comfortable trajectories. A companion iOS app allows users to set
+destinations, monitor progress, and optionally invoke a vision-language model planner that proposes
+semantically rich routes from first-person imagery for user approval. Safety is enforced through multiple hardware E-STOPs, a dedicated safety circuit, and conservative speed limits.
+In a 450 m Fall Validation Demonstration on real sidewalks, AnyWill successfully completed the route with a 1.2 m final error, avoided all static and dynamic pedestrians, and required only a single brief teleoperation during GNSS degradation, demonstrating the technical feasibility of user-interactive autonomous sidewalk mobility.},
   preview={AnyWill.png},
   website={https://mrsdprojects.ri.cmu.edu/2025teama/},
   journal={MRSD Capstone Project, 2025},
