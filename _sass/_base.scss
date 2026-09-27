@@ -689,9 +689,36 @@ footer.sticky-bottom {
     margin-top: 0;
 
     li {
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
 
       .preview {
+      }
+
+      .preview-videos-link {
+        display: block;
+      }
+
+      .preview-videos {
+        position: relative;
+        overflow: hidden;
+
+        video {
+          display: block;
+          width: 100%;
+          height: auto;
+        }
+
+        // Later clips are stacked over the first one, which sets the player's size.
+        video + video {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+        }
+
+        video:not(.active) {
+          visibility: hidden;
+        }
       }
 
       .abbr {
@@ -717,8 +744,21 @@ footer.sticky-bottom {
         }
       }
 
+      .title,
+      .author,
+      .periodical,
+      .summary {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
       .title {
         font-weight: bolder;
+      }
+
+      .summary {
+        margin-top: 0.5rem;
+        margin-bottom: 0;
       }
 
       .author {

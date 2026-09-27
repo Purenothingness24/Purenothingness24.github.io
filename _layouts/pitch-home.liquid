@@ -1,0 +1,42 @@
+---
+layout: pitch
+---
+{% assign about = site.pages | where: 'permalink', '/' | first %}
+<main class="pitch-home">
+  <header class="pitch-me">
+    <img class="pitch-photo" src="{{ about.profile.image | prepend: '/assets/img/' | relative_url | bust_file_cache }}" alt="">
+    <h1 class="pitch-name">
+      <span>{{ site.first_name }}</span>{% if site.middle_name %} {{ site.middle_name }}{% endif %} {{ site.last_name }}
+    </h1>
+    <ul class="pitch-roles">
+      {% for role in page.roles %}
+        <li>{{ role }}</li>
+      {% endfor %}
+    </ul>
+    <ul class="pitch-logos">
+      {% for logo in page.logos %}
+        <li class="pitch-logo-{{ logo.file | split: '.' | first }}">
+          <img src="{{ logo.file | prepend: '/assets/pitch/logos/' | relative_url | bust_file_cache }}" alt="{{ logo.alt }}">
+        </li>
+      {% endfor %}
+    </ul>
+  </header>
+  <section class="pitch-interests">
+    <h2>Research Interests</h2>
+    <div class="pitch-groups">
+      {% for group in page.groups %}
+        <div class="pitch-group">
+          <h3>{{ group.name }}</h3>
+          <ul>
+            {% for slug in group.slides %}
+              {% include pitch_entry.liquid slug=slug %}
+              <li>
+                <a href="{{ pitch_url | relative_url }}">{{ pitch_name }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+</main>

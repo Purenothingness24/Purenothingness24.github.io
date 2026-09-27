@@ -1,0 +1,27 @@
+<div class="service-entry-row">
+  <div class="service-entry-media{% if include.entry.image_fit == 'cover' %} service-entry-media-cover{% endif %}">
+    <img
+      src="{% link assets/img/service/{{ include.entry.image }} %}"
+      alt="{{ include.entry.image_alt | escape }}"
+      {% if site.lazy_loading_images %}
+        loading="lazy"
+      {% endif %}
+    >
+  </div>
+  <div class="service-entry-body">
+    <div class="service-entry-heading">
+      <span class="service-entry-role">{{ include.entry.role }}</span>
+      <span class="service-entry-dates">{{ include.entry.dates }}</span>
+    </div>
+    <div class="service-entry-name">
+      {% if include.entry.url %}
+        <a href="{{ include.entry.url }}">{{ include.entry.name }}</a>
+      {% else %}
+        {{ include.entry.name }}
+      {% endif %}
+    </div>
+    {% if include.entry.org %}
+      <div class="service-entry-org">{{ include.entry.org }}</div>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,38 @@
+---
+---
+{% if page.layout == 'pitch-slide' %}
+  {% assign pitch_slug = page.url | split: '/' | last %}
+  {% include pitch_entry.liquid slug=pitch_slug %}
+{% endif %}
+<!doctype html>
+<html lang="{{ site.lang }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pitch">
+    <title>{% if pitch_name %}{{ pitch_name }} | {% endif %}{{ site.first_name }} {{ site.last_name }}</title>
+    {% assign pitch_icon = site.icon | prepend: '/assets/img/' | relative_url | bust_file_cache %}
+    <link rel="icon" href="{{ pitch_icon }}">
+    <link rel="apple-touch-icon" href="{{ pitch_icon }}">
+    <link rel="stylesheet" href="{{ site.third_party_libraries.google_fonts.url.fonts }}">
+    <link rel="stylesheet" href="{{ '/assets/css/pitch.css' | relative_url | bust_css_cache }}">
+    {% if site.enable_darkmode %}
+      <script>
+        // The light/dark choice of assets/js/theme.js, which itself needs elements that only the main layout has.
+        (() => {
+          const setting = localStorage.getItem("theme");
+          const dark = setting === "dark" || (setting !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+        })();
+      </script>
+    {% endif %}
+  </head>
+  <body>
+    {{ content }}
+    <script src="{{ '/assets/js/pitch.js' | relative_url | bust_file_cache }}"></script>
+  </body>
+</html>

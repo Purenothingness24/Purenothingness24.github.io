@@ -1,0 +1,93 @@
+# Sections of the Service page (_pages/service.md), rendered in this order by _includes/service.liquid.
+# Each section needs a `title` (shown as a heading) and a list of `entries`.
+#
+# Entry fields, checked at build time by _plugins/service-data-check.rb:
+#   role       required  shown in bold, e.g. "Teaching Assistant"
+#   name       required  course or organization; linked when `url` is set
+#   url        optional
+#   org        optional  institution, shown muted under the name
+#   dates      required
+#   image      required  file name in assets/img/service/
+#   image_alt  required  alt text for the image
+#   image_fit  optional  `contain` (default) shows the whole image on a white tile, for logos;
+#                        `cover` fills the frame and crops the edges, for photos and posters
+#   entries    optional  sub-entries with the same fields, indented under this entry (one level only)
+
+- title: Teaching
+  entries:
+    - role: Teaching Assistant
+      name: 11-777 Multimodal Machine Learning
+      url: https://cmu-mmml.github.io/fall2024/
+      org: Carnegie Mellon University
+      dates: Spring 2025, Fall 2024
+      image: cmu-lti.png
+      image_alt: Carnegie Mellon Language Technologies Institute logo
+
+    - role: Teaching Assistant
+      name: 10-423/623 Generative AI
+      url: https://www.cs.cmu.edu/~mgormley/courses/10423/
+      org: Carnegie Mellon University
+      dates: Fall 2024, Spring 2024
+      image: cmu-mld.png
+      image_alt: Carnegie Mellon Machine Learning Department logo
+
+    - role: Research Mentor
+      name: Artificial Intelligence, Computer Science, and Large Language Models
+      url: https://www.yuanpeiyoungscholars.com
+      org: Peking University Yuanpei Young Scholars
+      dates: Spring-Summer 2024, Fall-Winter 2023
+      image: yuanpei-young-scholars.png
+      image_alt: Yuanpei Young Scholars logo
+
+- title: Community Building
+  entries:
+    - role: President
+      name: CMU Summit Organization
+      url: https://tartanconnect.cmu.edu/summit/club_signup
+      dates: 2020-2023
+      image: cmu-summit.png
+      image_alt: CMU Summit on US-China Innovation and Entrepreneurship logo
+      entries:
+        - role: President
+          name: 10th CMU Summit on U.S.-China Innovation and Entrepreneurship
+          url: https://mp.weixin.qq.com/s/o2pCx13G03dQZ-hsoFw1hg
+          dates: 2021
+          image: cmu-summit-10th.jpg
+          image_alt: 10th CMU Summit on U.S.-China Innovation and Entrepreneurship banner
+          image_fit: cover
+
+        - role: President
+          name: 11th CMU Summit on U.S.-China Innovation and Entrepreneurship
+          url: https://mp.weixin.qq.com/s/tbAl_L4JYHLretFPQHCgBg
+          dates: 2022
+          image: cmu-summit-11th.jpg
+          image_alt: 11th CMU Summit on US-China Innovation and Entrepreneurship title card
+
+        - role: Founder
+          name: CMU Pioneers Community
+          url: https://mp.weixin.qq.com/s/oK9eFTAdHiV7Qz7SHXnMbQ
+          dates: 2021-2023
+          image: cmu-pioneers.jpg
+          image_alt: CMU Pioneers Shanghai meetup poster
+          image_fit: cover
+
+        - role: Co-Host
+          name: CMU Hack-A-Startup
+          dates: 2019-2022
+          image: hack-a-startup.jpg
+          image_alt: Hack-A-Startup kickoff in a Tepper lecture hall
+          image_fit: cover
+
+        - role: Co-Host
+          name: CMU Global Opportunities Fair
+          dates: 2019-2022
+          image: global-opportunities-fair.png
+          image_alt: Global Opportunities Career Fair logo beside the CMU Career and Professional Development Center and CMU US-China Innovation and Entrepreneurship Association logos
+
+    - role: CMU Innovation Scholar
+      name: CMU Swartz Center for Entrepreneurship
+      url: https://www.cmu.edu/swartz-center-for-entrepreneurship/
+      dates: 2021-2023
+      image: swartz-innovation-scholars.jpg
+      image_alt: Swartz Center Innovation Scholars logo
+      image_fit: cover

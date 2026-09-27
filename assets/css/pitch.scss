@@ -1,0 +1,490 @@
+---
+---
+@charset "utf-8";
+
+// The hidden elevator-pitch deck (/pitch/), laid out for a landscape iPhone 13 (844×390 CSS px) held at arm's length:
+// large type, no scrolling, and videos as large as the screen allows. Colors and fonts follow the main site.
+
+@import "variables", "themes";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overscroll-behavior: none;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  color: var(--global-text-color);
+  background-color: var(--global-bg-color);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+h1,
+h2,
+h3,
+ul {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: var(--global-theme-color);
+  text-decoration: none;
+}
+
+.pitch-home,
+.pitch-slide {
+  height: 100dvh;
+  padding: max(12px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom))
+    max(20px, env(safe-area-inset-left));
+}
+
+// Main page: photo beside the name, roles and logos, then one column per research interest.
+
+.pitch-home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(10px, 4.5dvh, 24px);
+}
+
+.pitch-me {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: 1fr auto auto auto 1fr;
+  grid-template-areas:
+    "photo ."
+    "photo name"
+    "photo roles"
+    "photo logos"
+    "photo .";
+  column-gap: clamp(12px, 4dvh, 20px);
+}
+
+.pitch-photo {
+  grid-area: photo;
+  width: clamp(84px, 28dvh, 132px);
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  box-shadow:
+    0 2px 5px 0 rgba(0, 0, 0, 0.16),
+    0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.pitch-name {
+  grid-area: name;
+  font-size: clamp(26px, 9.5dvh, 44px);
+  font-weight: 300;
+  line-height: 1.1;
+
+  span {
+    font-weight: 700;
+  }
+}
+
+.pitch-roles {
+  grid-area: roles;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 0.3em;
+  font-size: clamp(14px, 4.4dvh, 19px);
+
+  li + li::before {
+    content: "·";
+    margin: 0 0.5em;
+    color: var(--global-text-color-light);
+  }
+}
+
+// White tiles keep every logo's own colors legible in the dark theme too.
+.pitch-logos {
+  grid-area: logos;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: clamp(6px, 2.2dvh, 12px);
+
+  li {
+    display: flex;
+    align-items: center;
+    height: clamp(24px, 8dvh, 34px);
+    padding: 4px 8px;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 0.25rem;
+    background-color: $white-color;
+  }
+
+  img {
+    display: block;
+    height: 100%;
+  }
+
+  // The wordmark is all lettering, so it reads larger than the other logos at the same height.
+  .pitch-logo-cmu img {
+    height: 58%;
+  }
+}
+
+.pitch-interests h2 {
+  margin-bottom: clamp(6px, 2.5dvh, 12px);
+  font-size: clamp(11px, 3.2dvh, 13px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--global-text-color-light);
+}
+
+.pitch-groups {
+  display: flex;
+  column-gap: clamp(24px, 5vw, 56px);
+  row-gap: 16px;
+}
+
+.pitch-group {
+  h3 {
+    margin-bottom: clamp(5px, 1.8dvh, 10px);
+    font-size: clamp(13px, 4dvh, 17px);
+    font-weight: 500;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(5px, 1.6dvh, 8px);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: clamp(32px, 9.8dvh, 42px);
+    padding: 0 0.8em;
+    border: 1px solid var(--global-theme-color);
+    border-radius: 0.25rem;
+    font-size: clamp(14px, 4.4dvh, 18px);
+    font-weight: 500;
+
+    &:active {
+      color: var(--global-hover-text-color);
+      background-color: var(--global-theme-color);
+    }
+  }
+}
+
+// Project page: its slides, one shown at a time by assets/js/pitch.js. A video slide has the project name and
+// venue above the video; an image slide shows a rendered slide or figure on that slide's own background color.
+
+.pitch-deck {
+  // Horizontal swipes change slides, so the browser must not claim them for panning or zooming.
+  touch-action: none;
+}
+
+.pitch-slide {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "overview title count"
+    "prev stage next";
+  gap: clamp(4px, 2dvh, 10px) 8px;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.pitch-title {
+  grid-area: title;
+  align-self: center;
+  font-size: clamp(18px, 6.4dvh, 27px);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.pitch-venue {
+  font-size: 0.8em;
+  font-weight: 400;
+  color: var(--global-theme-color);
+}
+
+.pitch-overview,
+.pitch-prev,
+.pitch-next {
+  display: grid;
+  place-items: center;
+  color: var(--slide-ink, var(--global-text-color-light));
+
+  &:active {
+    color: var(--global-theme-color);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.pitch-overview {
+  grid-area: overview;
+  height: 36px;
+}
+
+.pitch-count {
+  grid-area: count;
+  place-self: center;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--slide-ink, var(--global-text-color-light));
+}
+
+.pitch-prev {
+  grid-area: prev;
+}
+
+.pitch-next {
+  grid-area: next;
+}
+
+.pitch-stage {
+  grid-area: stage;
+  display: grid;
+  place-items: center;
+  container-type: size;
+}
+
+.pitch-player {
+  // assets/js/pitch.js replaces this with the video's own aspect ratio once its metadata loads.
+  --ratio: 16 / 9;
+  position: relative;
+  width: min(100cqw, 100cqh * var(--ratio));
+  aspect-ratio: var(--ratio);
+  overflow: hidden;
+  border-radius: 0.25rem;
+  background-color: $black-color;
+  box-shadow:
+    0 2px 5px 0 rgba(0, 0, 0, 0.16),
+    0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+
+  video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 76px;
+    height: 76px;
+    margin: auto;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M8 5.5v13l11-6.5z'/%3E%3C/svg%3E")
+      56% center / 38px no-repeat;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  &.is-paused::after {
+    opacity: 1;
+  }
+}
+
+// Dragging the bar is the only way to scrub (assets/js/pitch.js). It is taller than its visible line to be easy to grab.
+.pitch-progress {
+  position: absolute;
+  inset: auto 0 0;
+  height: 24px;
+  touch-action: none;
+
+  &::before,
+  span {
+    position: absolute;
+    inset: auto 0 0;
+    height: 4px;
+  }
+
+  &::before {
+    content: "";
+    background-color: rgba(255, 255, 255, 0.35);
+  }
+
+  span {
+    background-color: var(--global-theme-color);
+    transform: scaleX(var(--progress, 0));
+    transform-origin: left;
+  }
+
+  &.is-scrubbing::before,
+  &.is-scrubbing span {
+    height: 8px;
+  }
+}
+
+.pitch-slide.image {
+  grid-template-columns: minmax(32px, 1fr) auto minmax(32px, 1fr);
+  grid-template-rows: 36px minmax(0, 1fr) 36px;
+  grid-template-areas:
+    "overview stage count"
+    "prev stage next"
+    ". stage .";
+  container-type: size;
+  background-color: var(--slide-bg);
+
+  .pitch-stage {
+    container-type: normal;
+  }
+}
+
+// The largest box with the slide's aspect ratio beside the two 32px side columns and their 8px gaps.
+.pitch-frame {
+  position: relative;
+  width: min(100cqw - 80px, 100cqh * var(--ratio));
+  aspect-ratio: var(--ratio);
+  container-type: inline-size;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// A video placed on a rendered slide at the position, size and shape it has on the original slide.
+.pitch-clip {
+  position: absolute;
+  overflow: hidden;
+  cursor: pointer;
+
+  video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 36px;
+    height: 36px;
+    margin: auto;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M8 5.5v13l11-6.5z'/%3E%3C/svg%3E")
+      56% center / 18px no-repeat;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+
+  &.is-paused::after {
+    opacity: 1;
+  }
+}
+
+@media (orientation: portrait) {
+  .pitch-home {
+    gap: 36px;
+  }
+
+  .pitch-me {
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "photo name"
+      "roles roles"
+      "logos logos";
+    align-items: center;
+  }
+
+  .pitch-photo {
+    width: 88px;
+  }
+
+  .pitch-name {
+    font-size: 38px;
+  }
+
+  .pitch-roles {
+    flex-direction: column;
+    margin-top: 16px;
+
+    li + li::before {
+      content: none;
+    }
+  }
+
+  .pitch-groups {
+    flex-direction: column;
+    row-gap: 22px;
+  }
+
+  .pitch-group ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .pitch-slide {
+    grid-template-rows: auto 1fr auto auto auto 1fr;
+    grid-template-areas:
+      "overview . count"
+      ". . ."
+      "title title title"
+      "stage stage stage"
+      "prev . next"
+      ". . .";
+  }
+
+  .pitch-slide.image {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    grid-template-rows: auto 1fr auto auto 1fr;
+    grid-template-areas:
+      "overview . count"
+      ". . ."
+      "stage stage stage"
+      "prev . next"
+      ". . .";
+  }
+
+  .pitch-prev,
+  .pitch-next {
+    height: 44px;
+  }
+
+  .pitch-stage {
+    container-type: normal;
+  }
+
+  .pitch-player,
+  .pitch-frame {
+    width: 100%;
+  }
+}

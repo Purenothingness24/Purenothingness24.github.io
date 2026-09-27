@@ -1,0 +1,139 @@
+---
+layout: pitch
+---
+{% assign pitch_home = site.pages | where: 'layout', 'pitch-home' | first %}
+{% assign deck = '' | split: '' %}
+{% for group in pitch_home.groups %}
+  {% assign deck = deck | concat: group.slides %}
+{% endfor %}
+{% assign slug = page.url | split: '/' | last %}
+{% for deck_slug in deck %}
+  {% if deck_slug == slug %}
+    {% assign position = forloop.index0 %}
+  {% endif %}
+{% endfor %}
+
+{% comment %} Going back from a project's first slide opens the previous project at its last slide ("#n" picks slide n). {% endcomment %}
+{% if position > 0 %}
+  {% assign prev_position = position | minus: 1 %}
+  {% assign prev_slug = deck[prev_position] %}
+  {% include pitch_entry.liquid slug=prev_slug %}
+  {% assign prev_count = pitch_page.slides | size %}
+  {% assign prev_url = pitch_url | relative_url %}
+  {% if prev_count > 1 %}
+    {% assign prev_url = prev_url | append: '#' | append: prev_count %}
+  {% endif %}
+  {% assign prev_name = pitch_name %}
+{% endif %}
+{% assign next_position = position | plus: 1 %}
+{% assign next_slug = deck[next_position] %}
+{% if next_slug %}
+  {% include pitch_entry.liquid slug=next_slug %}
+  {% assign next_url = pitch_url | relative_url %}
+  {% assign next_name = pitch_name %}
+{% endif %}
+{% include pitch_entry.liquid slug=slug %}
+{% assign count = page.slides | size %}
+
+<main class="pitch-deck">
+  {% for slide in page.slides %}
+    {% assign number = forloop.index %}
+    {% if forloop.first %}
+      {% assign back_url = prev_url %}
+      {% assign back_label = 'Previous: ' | append: prev_name %}
+    {% else %}
+      {% assign back_url = '#' | append: forloop.index0 %}
+      {% assign back_label = 'Previous slide' %}
+    {% endif %}
+    {% if forloop.last %}
+      {% assign forward_url = next_url %}
+      {% assign forward_label = 'Next: ' | append: next_name %}
+    {% else %}
+      {% assign following = number | plus: 1 %}
+      {% assign forward_url = '#' | append: following %}
+      {% assign forward_label = 'Next slide' %}
+    {% endif %}
+    <section
+      class="pitch-slide{% if slide.image %} image{% endif %}"
+      {% if slide.image %}
+        style="--slide-bg: {{ slide.background }};{% if slide.ink %} --slide-ink: {{ slide.ink }};{% endif %}"
+      {% endif %}
+      {% unless forloop.first %}
+        hidden
+      {% endunless %}
+    >
+      <a class="pitch-overview" href="{{ pitch_home.url | relative_url }}" aria-label="All projects">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M4 4h6v6H4zm10 0h6v6h-6zM4 14h6v6H4zm10 0h6v6h-6z" />
+        </svg>
+      </a>
+      {% if slide.video %}
+        <h1 class="pitch-title">
+          {{ pitch_name }}
+          {% if pitch_venue != blank %}
+            <span class="pitch-venue">({{ pitch_venue }})</span>
+          {% endif %}
+        </h1>
+      {% endif %}
+      {% if count > 1 %}
+        <span class="pitch-count">{{ number }}/{{ count }}</span>
+      {% endif %}
+      {% if back_url %}
+        <a class="pitch-prev" href="{{ back_url }}" aria-label="{{ back_label | escape }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7" />
+          </svg>
+        </a>
+      {% endif %}
+      <div class="pitch-stage">
+        {% if slide.video %}
+          <div class="pitch-player">
+            <video
+              src="{{ slide.video | prepend: '/assets/pitch/' | relative_url | bust_file_cache }}"
+              poster="{{ slide.poster | prepend: '/assets/pitch/' | relative_url | bust_file_cache }}"
+              aria-label="{{ pitch_name | escape }} video"
+              {% if forloop.first %}
+                autoplay preload="auto"
+              {% else %}
+                preload="none"
+              {% endif %}
+              muted
+              loop
+              playsinline
+            ></video>
+            <div class="pitch-progress" aria-hidden="true"><span></span></div>
+          </div>
+        {% else %}
+          <div class="pitch-frame" style="--ratio: {{ slide.ratio }}">
+            <img src="{{ slide.image | prepend: '/assets/pitch/' | relative_url | bust_file_cache }}" alt="{{ pitch_name | escape }}, slide {{ number }}">
+            {% for clip in slide.videos %}
+              <div
+                class="pitch-clip"
+                style="left: {{ clip.box[0] }}%; top: {{ clip.box[1] }}%; width: {{ clip.box[2] }}%; height: {{ clip.box[3] }}%;{% if clip.radius %} border-radius: {{ clip.radius[0] }}% / {{ clip.radius[1] }}%;{% endif %}{% if clip.outline %} outline: {{ clip.outline[1] }}cqw solid {{ clip.outline[0] }}; outline-offset: {{ clip.outline[1] | divided_by: -2.0 }}cqw;{% endif %}"
+              >
+                <video
+                  src="{{ clip.file | prepend: '/assets/pitch/' | relative_url | bust_file_cache }}"
+                  {% if forloop.parentloop.first %}
+                    autoplay preload="auto"
+                  {% else %}
+                    preload="none"
+                  {% endif %}
+                  muted
+                  loop
+                  playsinline
+                ></video>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      {% if forward_url %}
+        <a class="pitch-next" href="{{ forward_url }}" aria-label="{{ forward_label | escape }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      {% endif %}
+    </section>
+  {% endfor %}
+</main>

@@ -1,10 +1,10 @@
 ---
 layout: page
-permalink: /projects/
-title: Projects
+permalink: /research/
+title: Research
 description: ""
 nav: true
-nav_order: 3
+nav_order: 2
 ---
 
 
@@ -15,6 +15,6 @@ nav_order: 3
 
 <div class="publications">
 
-{% bibliography --query @*[category=project]* %}
+{% bibliography --query @*[category=research]* %}
 
 </div>

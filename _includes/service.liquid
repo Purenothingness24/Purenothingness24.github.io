@@ -1,0 +1,23 @@
+<div class="service">
+  {% for section in site.data.service %}
+    <section class="service-section">
+      <h2 id="{{ section.title | slugify }}">{{ section.title }}</h2>
+      <ul class="service-list">
+        {% for entry in section.entries %}
+          <li class="service-entry">
+            {% include service_entry.liquid entry=entry %}
+            {% if entry.entries %}
+              <ul class="service-list service-sublist">
+                {% for subentry in entry.entries %}
+                  <li class="service-entry">
+                    {% include service_entry.liquid entry=subentry %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endfor %}
+</div>

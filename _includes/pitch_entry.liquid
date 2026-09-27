@@ -1,0 +1,17 @@
+{% comment %}
+  Resolves pitch slide `include.slug`, the page at /pitch/<slug>/, to pitch_url, pitch_name and pitch_venue.
+  A slide with `bib` takes its name (the title up to any colon) and venue from that papers.bib entry, so both match the
+  homepage's Recent Work list. A slide without a bib entry sets `title` and, optionally, `venue`.
+{% endcomment %}
+{% assign pitch_url = '/pitch/' | append: include.slug | append: '/' %}
+{% assign pitch_page = site.pages | where: 'url', pitch_url | first %}
+{% if pitch_page.bib %}
+  {% assign pitch_bib = pitch_page.bib %}
+  {% capture pitch_name %}{% bibliography --group_by none --query @*[key={{ pitch_bib }}] --template {{ entry.title | split: ':' | first }} %}{% endcapture %}
+  {% capture pitch_venue %}{% bibliography --group_by none --query @*[key={{ pitch_bib }}] --template {{ entry.journal }} %}{% endcapture %}
+  {% assign pitch_name = pitch_name | strip_html | strip %}
+  {% assign pitch_venue = pitch_venue | strip_html | strip %}
+{% else %}
+  {% assign pitch_name = pitch_page.title %}
+  {% assign pitch_venue = pitch_page.venue %}
+{% endif %}

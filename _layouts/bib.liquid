@@ -2,7 +2,7 @@
 ---
 <div class="row">
   {% if site.enable_publication_thumbnails %}
-    <div class="col col-sm-2 abbr">
+    <div class="col col-sm-4 abbr">
       {%- if entry.abbr -%}
         {%- if site.data.venues[entry.abbr] -%}
           {% assign venue_style = null %}
@@ -25,7 +25,35 @@
           <abbr class="badge rounded w-100">{{ entry.abbr }}</abbr>
         {% endif %}
       {% endif %}
-      {% if entry.preview %}
+      {% if entry.preview_videos %}
+        {% assign preview_videos = entry.preview_videos | split: ',' %}
+        {% if entry.website %}
+          <a href="{{ entry.website }}" class="preview-videos-link" aria-label="{{ entry.title | strip_html | escape }} website">
+        {% endif %}
+        <div class="preview-videos z-depth-1 rounded">
+          {% for preview_video in preview_videos %}
+            <video
+              src="{{ preview_video | strip | prepend: '/assets/video/' | relative_url }}"
+              muted
+              playsinline
+              {% if forloop.first %}
+                class="active"
+                autoplay
+                preload="auto"
+                poster="{{ entry.preview_poster | prepend: '/assets/video/' | relative_url }}"
+              {% else %}
+                preload="none"
+              {% endif %}
+              {% if forloop.length == 1 %}
+                loop
+              {% endif %}
+            ></video>
+          {% endfor %}
+        </div>
+        {% if entry.website %}
+          </a>
+        {% endif %}
+      {% elsif entry.preview %}
         {% if entry.preview contains '://' %}
           <img class="preview z-depth-1 rounded" src="{{ entry.preview }}">
         {% else %}
@@ -191,6 +219,9 @@
     <div class="periodical">
       {{ entry.note | strip }}
     </div>
+    {% if entry.summary %}
+      <p class="summary">{{ entry.summary }}</p>
+    {% endif %}
 
     <!-- Links/Buttons -->
     <div class="links">
@@ -198,9 +229,6 @@
         <a class="award btn btn-sm z-depth-0" role="button">
           {%- if entry.award_name %}{{ entry.award_name }}{% else %}Awarded{% endif -%}
         </a>
-      {% endif %}
-      {% if entry.abstract %}
-        <a class="abstract btn btn-sm z-depth-0" role="button">Abs</a>
       {% endif %}
       {% if entry.arxiv %}
         <a href="http://arxiv.org/abs/{{ entry.arxiv }}" class="btn btn-sm z-depth-0" role="button">arXiv</a>
@@ -347,13 +375,6 @@
       <!-- Hidden Award block -->
       <div class="award hidden d-print-inline">
         <p>{{ entry.award | markdownify }}</p>
-      </div>
-    {% endif %}
-
-    {% if entry.abstract %}
-      <!-- Hidden abstract block -->
-      <div class="abstract hidden">
-        <p>{{ entry.abstract }}</p>
       </div>
     {% endif %}
 
