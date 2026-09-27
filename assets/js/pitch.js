@@ -1,6 +1,7 @@
 // Pitch project pages show one slide at a time, and "#n" in the URL picks slide n. Swiping left or right anywhere
 // changes slides, like the arrow links. Tapping a video pauses or resumes it (iOS Low Power Mode blocks autoplay
 // until then), and dragging a video's progress bar is the only way to scrub.
+// Production builds minify this file with Uglifier (jekyll-minifier), which fails on syntax newer than ES2015 such as ??.
 const slides = [...document.querySelectorAll(".pitch-slide")];
 
 // A clip holds one video: a video slide's player, or a video placed on a rendered slide.
@@ -48,7 +49,7 @@ document.querySelectorAll(".pitch-progress").forEach((bar) => {
   const video = videoOf(player);
   // The position the finger has dragged to but the video hasn't started seeking to yet. The bar shows it right away.
   let target = null;
-  const render = () => bar.style.setProperty("--progress", video.duration ? (target ?? video.currentTime) / video.duration : 0);
+  const render = () => bar.style.setProperty("--progress", video.duration ? (target === null ? video.currentTime : target) / video.duration : 0);
   let frame = 0;
   const tick = () => {
     render();
