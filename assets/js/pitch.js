@@ -39,14 +39,16 @@ slides.forEach((slide) => {
     clip.addEventListener("click", () => {
       const resume = clips.some((other) => videoOf(other).paused);
       clips.forEach((other) => (resume ? play(other) : videoOf(other).pause()));
-    }),
+    })
   );
 });
 
 document.querySelectorAll(".pitch-progress").forEach((bar) => {
   const player = bar.closest(".pitch-player");
   const video = videoOf(player);
-  const render = () => bar.style.setProperty("--progress", video.duration ? video.currentTime / video.duration : 0);
+  // The position the finger has dragged to but the video hasn't started seeking to yet. The bar shows it right away.
+  let target = null;
+  const render = () => bar.style.setProperty("--progress", video.duration ? (target ?? video.currentTime) / video.duration : 0);
   let frame = 0;
   const tick = () => {
     render();
@@ -60,35 +62,62 @@ document.querySelectorAll(".pitch-progress").forEach((bar) => {
     cancelAnimationFrame(frame);
     render();
   });
-  video.addEventListener("seeked", render);
+
+  // A new seek cancels the one in flight, so seeking on every move would freeze the picture until the finger stops.
+  // Instead, each seek starts when the previous one lands, at wherever the finger is by then.
+  const seek = () => {
+    if (target === null || video.seeking) return;
+    video.currentTime = target;
+    target = null;
+  };
+  video.addEventListener("seeked", () => {
+    seek();
+    render();
+  });
 
   // The bar captures the pointer while dragging, and its events stop here so they neither swipe nor pause.
+  let dragging = null;
   let resume = false;
-  const seek = (event) => {
+  const positionOf = (event) => {
     const box = bar.getBoundingClientRect();
-    video.currentTime = (Math.min(Math.max(event.clientX - box.left, 0), box.width) / box.width) * video.duration;
+    return (Math.min(Math.max(event.clientX - box.left, 0), box.width) / box.width) * video.duration;
+  };
+  const follow = (event) => {
+    target = positionOf(event);
+    seek();
     render();
   };
   bar.addEventListener("pointerdown", (event) => {
     event.stopPropagation();
+    if (dragging !== null || event.button !== 0) return;
+    dragging = event.pointerId;
     bar.setPointerCapture(event.pointerId);
     bar.classList.add("is-scrubbing");
     resume = !video.paused;
     video.pause();
-    seek(event);
+    follow(event);
   });
   bar.addEventListener("pointermove", (event) => {
     event.stopPropagation();
-    if (bar.hasPointerCapture(event.pointerId)) seek(event);
+    if (event.pointerId === dragging) follow(event);
   });
+  // The video ends up where the finger lifts, even if a seek is still in flight.
   const release = (event) => {
     event.stopPropagation();
-    if (!bar.classList.contains("is-scrubbing")) return;
+    if (event.pointerId !== dragging) return;
+    dragging = null;
     bar.classList.remove("is-scrubbing");
+    if (event.type === "pointerup") target = positionOf(event);
+    if (target !== null) {
+      video.currentTime = target;
+      target = null;
+    }
+    render();
     if (resume) play(player);
   };
   bar.addEventListener("pointerup", release);
   bar.addEventListener("pointercancel", release);
+  bar.addEventListener("lostpointercapture", release);
   bar.addEventListener("click", (event) => event.stopPropagation());
 });
 
@@ -98,18 +127,18 @@ const show = () => {
     reportError(new Error(`${location.hash} is not a slide on this page, which has ${slides.length}`));
     number = 1;
   }
-  slides.forEach((slide, i) => {
-    slide.hidden = i !== number - 1;
-    clipsOf(slide).forEach((clip) => {
-      if (slide.hidden) {
-        videoOf(clip).pause();
-      } else {
-        videoOf(clip).preload = "auto";
-        play(clip);
-      }
-    });
+  const active = slides[number - 1];
+  slides.forEach((slide) => {
+    slide.hidden = slide !== active;
+    if (slide.hidden) clipsOf(slide).forEach((clip) => videoOf(clip).pause());
   });
-  if (slides[number]) clipsOf(slides[number]).forEach((clip) => (videoOf(clip).preload = "auto"));
+  [active, slides[number]].forEach((slide) => slide && clipsOf(slide).forEach((clip) => (videoOf(clip).preload = "auto")));
+  // Browsers pause a muted video that starts while they still consider it hidden, so wait until the slide is laid out.
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      if (!active.hidden) clipsOf(active).forEach(play);
+    })
+  );
 };
 
 const deck = document.querySelector(".pitch-deck");
@@ -145,6 +174,6 @@ if (deck) {
     (event) => {
       if (event.timeStamp - swipedAt < 500 && !event.target.closest("a")) event.stopPropagation();
     },
-    true,
+    true
   );
 }

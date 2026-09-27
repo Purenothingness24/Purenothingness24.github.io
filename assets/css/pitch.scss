@@ -1,5 +1,6 @@
 ---
 ---
+
 @charset "utf-8";
 
 // The hidden elevator-pitch deck (/pitch/), laid out for a landscape iPhone 13 (844×390 CSS px) held at arm's length:
@@ -281,7 +282,6 @@ a {
   position: relative;
   width: min(100cqw, 100cqh * var(--ratio));
   aspect-ratio: var(--ratio);
-  overflow: hidden;
   border-radius: 0.25rem;
   background-color: $black-color;
   box-shadow:
@@ -289,10 +289,12 @@ a {
     0 2px 10px 0 rgba(0, 0, 0, 0.12);
   cursor: pointer;
 
+  // The video rounds its own corners because the player can't clip: the progress bar reaches below it.
   video {
     display: block;
     width: 100%;
     height: 100%;
+    border-radius: inherit;
     object-fit: contain;
   }
 
@@ -317,17 +319,19 @@ a {
   }
 }
 
-// Dragging the bar is the only way to scrub (assets/js/pitch.js). It is taller than its visible line to be easy to grab.
+// Dragging the bar is the only way to scrub (assets/js/pitch.js). Its line runs along the bottom edge of the video, and
+// its hit area is a finger's 44px tall, reaching 12px (the slide's smallest bottom padding) below the video so that a
+// finger landing just under the line still grabs the bar instead of swiping.
 .pitch-progress {
   position: absolute;
-  inset: auto 0 0;
-  height: 24px;
+  inset: auto 0 -12px;
+  height: 44px;
   touch-action: none;
 
   &::before,
   span {
     position: absolute;
-    inset: auto 0 0;
+    inset: auto 0 12px;
     height: 4px;
   }
 
