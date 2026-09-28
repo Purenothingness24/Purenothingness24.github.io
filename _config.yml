@@ -220,6 +220,10 @@ defaults:
       path: "assets"
     values:
       sitemap: false
+  - scope:
+      path: "googlec2dde9aee0511269.html" # Google Search Console verification file: it must stay byte-for-byte, so no front matter
+    values:
+      sitemap: false
 
 sass:
   style: compressed
@@ -229,7 +233,7 @@ sass:
 # -----------------------------------------------------------------------------
 
 jekyll-minifier:
-  exclude: ["robots.txt", "assets/js/search/*.js"]
+  exclude: ["robots.txt", "assets/js/search/*.js", "googlec2dde9aee0511269.html"]
   uglifier_args:
     harmony: true
 
