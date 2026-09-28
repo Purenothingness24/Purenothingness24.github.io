@@ -4,13 +4,14 @@ module Jekyll
   module CacheBust
     class CacheDigester
       require 'digest/md5'
-      require 'pathname'
 
-      attr_accessor :file_name, :directory
+      SASS_DIR = '_sass'.freeze
 
-      def initialize(file_name:, directory: nil)
+      attr_accessor :file_name, :stylesheet
+
+      def initialize(file_name:, stylesheet: false)
         self.file_name = file_name
-        self.directory = directory
+        self.stylesheet = stylesheet
       end
 
       def digest!
@@ -19,31 +20,39 @@ module Jekyll
 
       private
 
-      def directory_files_content
-        target_path = File.join(directory, '**', '*')
-        Dir[target_path].map{|f| File.read(f) unless File.directory?(f) }.join
-      end
-
-      def file_content
-        local_file_name = file_name.slice((file_name.index('assets/')..-1))
-        File.read(local_file_name)
-      end
-
       def file_contents
-        is_directory? ? file_content : directory_files_content
+        stylesheet ? stylesheet_content : File.read(local_file_name)
       end
 
-      def is_directory?
-        directory.nil?
+      # A compiled stylesheet such as assets/css/main.css changes whenever its Sass entry point
+      # (assets/css/main.scss) or any partial it can import from _sass/ changes.
+      def stylesheet_content
+        entry_point = local_file_name.sub(/\.css\z/, '.scss')
+        unless File.file?(entry_point)
+          raise Errors::FatalException, "cache-bust: #{file_name} has no Sass entry point at #{entry_point}"
+        end
+        unless File.directory?(SASS_DIR)
+          raise Errors::FatalException, "cache-bust: #{SASS_DIR}/ does not exist, so #{file_name} cannot be fingerprinted"
+        end
+
+        partials = Dir[File.join(SASS_DIR, '**', '*.scss')].sort
+        ([entry_point] + partials).map { |path| File.read(path) }.join
+      end
+
+      def local_file_name
+        start = file_name.index('assets/')
+        raise Errors::FatalException, "cache-bust: #{file_name} is not under assets/" if start.nil?
+
+        file_name[start..]
       end
     end
 
     def bust_file_cache(file_name)
-      CacheDigester.new(file_name: file_name, directory: nil).digest!
+      CacheDigester.new(file_name: file_name).digest!
     end
 
     def bust_css_cache(file_name)
-      CacheDigester.new(file_name: file_name, directory: 'assets/_sass').digest!
+      CacheDigester.new(file_name: file_name, stylesheet: true).digest!
     end
   end
 end

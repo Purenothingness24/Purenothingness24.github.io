@@ -90,6 +90,8 @@ jobs:
           pip3 install --upgrade jupyter
           export JEKYLL_ENV=production
           bundle exec jekyll build
+          # Serve the built site as-is: without this file GitHub Pages runs Jekyll on it again, which drops paths starting with "_"
+          touch _site/.nojekyll
       - name: Purge unused CSS 🧹
         run: |
           npm install -g purgecss
