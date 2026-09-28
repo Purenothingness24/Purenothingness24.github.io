@@ -19,10 +19,12 @@ const play = (clip) =>
 
 clipsOf(document).forEach((clip) => {
   const video = videoOf(clip);
+  const slide = clip.closest(".pitch-slide");
   const fail = () => reportError(new Error(`Pitch video failed to load: ${video.currentSrc || video.src} (MediaError code ${video.error.code})`));
   if (video.error) fail();
   video.addEventListener("error", fail);
-  video.addEventListener("play", () => clip.classList.remove("is-paused"));
+  // Browsers resume the videos they paused while the page was in the background, whatever slide those are on.
+  video.addEventListener("play", () => (slide.hidden ? video.pause() : clip.classList.remove("is-paused")));
   video.addEventListener("pause", () => clip.classList.add("is-paused"));
 });
 
@@ -45,8 +47,8 @@ slides.forEach((slide) => {
 });
 
 document.querySelectorAll(".pitch-progress").forEach((bar) => {
-  const player = bar.closest(".pitch-player");
-  const video = videoOf(player);
+  const clip = bar.closest(".pitch-player, .pitch-clip");
+  const video = videoOf(clip);
   // The position the finger has dragged to but the video hasn't started seeking to yet. The bar shows it right away.
   let target = null;
   const render = () => bar.style.setProperty("--progress", video.duration ? (target === null ? video.currentTime : target) / video.duration : 0);
@@ -114,7 +116,7 @@ document.querySelectorAll(".pitch-progress").forEach((bar) => {
       target = null;
     }
     render();
-    if (resume) play(player);
+    if (resume) play(clip);
   };
   bar.addEventListener("pointerup", release);
   bar.addEventListener("pointercancel", release);
@@ -134,7 +136,9 @@ const show = () => {
     if (slide.hidden) clipsOf(slide).forEach((clip) => videoOf(clip).pause());
   });
   [active, slides[number]].forEach((slide) => slide && clipsOf(slide).forEach((clip) => (videoOf(clip).preload = "auto")));
-  // Browsers pause a muted video that starts while they still consider it hidden, so wait until the slide is laid out.
+  // Start right away: browsers throttle rendering, so waiting for frames can delay the start by seconds. A browser that
+  // refuses a muted video started while it still considers the slide hidden gets a second start once it's laid out.
+  clipsOf(active).forEach(play);
   requestAnimationFrame(() =>
     requestAnimationFrame(() => {
       if (!active.hidden) clipsOf(active).forEach(play);

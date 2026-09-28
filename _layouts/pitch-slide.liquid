@@ -105,11 +105,14 @@ layout: pitch
           </div>
         {% else %}
           <div class="pitch-frame" style="--ratio: {{ slide.ratio }}">
-            <img src="{{ slide.image | prepend: '/assets/pitch/' | relative_url | bust_file_cache }}" alt="{{ pitch_name | escape }}, slide {{ number }}">
+            <img
+              src="{{ slide.image | prepend: '/assets/pitch/' | relative_url | bust_file_cache }}"
+              alt="{{ pitch_name | escape }}, slide {{ number }}"
+            >
             {% for clip in slide.videos %}
               <div
                 class="pitch-clip"
-                style="left: {{ clip.box[0] }}%; top: {{ clip.box[1] }}%; width: {{ clip.box[2] }}%; height: {{ clip.box[3] }}%;{% if clip.radius %} border-radius: {{ clip.radius[0] }}% / {{ clip.radius[1] }}%;{% endif %}{% if clip.outline %} outline: {{ clip.outline[1] }}cqw solid {{ clip.outline[0] }}; outline-offset: {{ clip.outline[1] | divided_by: -2.0 }}cqw;{% endif %}"
+                style="left: {{ clip.box[0] }}%; top: {{ clip.box[1] }}%; width: {{ clip.box[2] }}%; height: {{ clip.box[3] }}%;{% if clip.radius %} border-radius: {{ clip.radius[0] }}% / {{ clip.radius[1] }}%; --bar-inset: {{ clip.radius[0] }}%;{% endif %}{% if clip.outline %} outline: {{ clip.outline[1] }}cqw solid {{ clip.outline[0] }}; outline-offset: {{ clip.outline[1] | divided_by: -2.0 }}cqw; --bar-bottom: {{ clip.outline[1] | divided_by: 2.0 }}cqw;{% endif %}"
               >
                 <video
                   src="{{ clip.file | prepend: '/assets/pitch/' | relative_url | bust_file_cache }}"
@@ -122,6 +125,7 @@ layout: pitch
                   loop
                   playsinline
                 ></video>
+                <div class="pitch-progress" aria-hidden="true"><span></span></div>
               </div>
             {% endfor %}
           </div>

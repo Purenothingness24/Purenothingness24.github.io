@@ -352,6 +352,24 @@ a {
   }
 }
 
+// A clip's bar is thinner, and its hit area shorter so that a tap on most of a small clip still pauses it. The line runs
+// along the straight part of the clip's bottom edge, inside any rounded corners (--bar-inset) and outline (--bar-bottom).
+.pitch-clip .pitch-progress {
+  inset: auto var(--bar-inset, 0) var(--bar-bottom, 0);
+  height: 20px;
+
+  &::before,
+  span {
+    bottom: 0;
+    height: 2px;
+  }
+
+  &.is-scrubbing::before,
+  &.is-scrubbing span {
+    height: 4px;
+  }
+}
+
 .pitch-slide.image {
   grid-template-columns: minmax(32px, 1fr) auto minmax(32px, 1fr);
   grid-template-rows: 36px minmax(0, 1fr) 36px;
