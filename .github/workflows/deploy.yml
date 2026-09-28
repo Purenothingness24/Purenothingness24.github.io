@@ -79,6 +79,12 @@ jobs:
           valueFile: "_config.yml"
           propertyPath: "giscus.repo"
           value: ${{ github.repository }}
+      - name: Install ImageMagick 🖼️
+        # jekyll-imagemagick runs `convert` to write the WebP images that the pages' srcset attributes point to
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+          convert -list format | grep -i webp
       - name: Install and Build 🔧
         run: |
           pip3 install --upgrade jupyter
