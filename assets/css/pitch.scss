@@ -60,7 +60,8 @@ a {
     max(20px, env(safe-area-inset-left));
 }
 
-// Main page: photo beside the name, roles and logos, then one column per research interest.
+// Main page: photo beside the name, roles and logos, then the research interests in two columns, each listing its
+// projects in a row.
 
 .pitch-home {
   display: flex;
@@ -157,9 +158,9 @@ a {
 }
 
 .pitch-groups {
-  display: flex;
-  column-gap: clamp(24px, 5vw, 56px);
-  row-gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 4dvh, 18px) clamp(24px, 5vw, 56px);
 }
 
 .pitch-group {
@@ -171,8 +172,7 @@ a {
 
   ul {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
     gap: clamp(5px, 1.6dvh, 8px);
   }
 
@@ -447,13 +447,8 @@ a {
   }
 
   .pitch-groups {
-    flex-direction: column;
+    grid-template-columns: minmax(0, 1fr);
     row-gap: 22px;
-  }
-
-  .pitch-group ul {
-    flex-direction: row;
-    flex-wrap: wrap;
   }
 
   .pitch-slide {

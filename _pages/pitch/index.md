@@ -17,9 +17,11 @@ logos:
     alt: CMU AirLab
 groups:
   - name: Humanoids Loco-Manipulation
-    slides: [muscleman, propriotrack3r, fieldaihumanoid]
+    slides: [muscleman, propriotrack3r]
   - name: World Models
     slides: [grndctrl]
-  - name: Semantic Scene Exploration and Interaction
-    slides: [rayfronts, anywill]
+  - name: Semantic Scene Exploration
+    slides: [rayfronts]
+  - name: Deployable Systems
+    slides: [fieldaihumanoid, anywill]
 ---
