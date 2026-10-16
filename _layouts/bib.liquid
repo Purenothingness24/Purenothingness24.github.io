@@ -285,6 +285,13 @@
       {% if entry.website %}
         <a href="{{ entry.website }}" class="btn btn-sm z-depth-0" role="button">Website</a>
       {% endif %}
+      {% if entry.news %}
+        {% assign news_items = entry.news | strip_newlines | split: ', ' %}
+        {% for news_item in news_items %}
+          {% assign news_link = news_item | split: '|' %}
+          <a href="{{ news_link[1] | strip }}" class="btn btn-sm z-depth-0" role="button">{{ news_link[0] | strip }}</a>
+        {% endfor %}
+      {% endif %}
     </div>
     {% if site.enable_publication_badges %}
       {% assign entry_has_altmetric_badge = false %}
