@@ -762,12 +762,15 @@ footer.sticky-bottom {
       }
 
       .author {
+        // Co-author links look exactly like the plain names around them until hovered or focused from the keyboard.
+        // Their color is set rather than inherited so it fades in step with the plain names when the theme changes.
         a {
-          border-bottom: 1px dashed var(--global-theme-color);
+          color: var(--global-text-color);
 
-          &:hover {
-            border-bottom-style: solid;
-            text-decoration: none;
+          &:hover,
+          &:focus-visible {
+            color: var(--global-theme-color);
+            text-decoration: underline;
           }
         }
 

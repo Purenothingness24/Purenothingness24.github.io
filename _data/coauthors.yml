@@ -1,34 +1,117 @@
-"adams":
-  - firstname: ["Edwin", "E.", "E. P.", "Edwin Plimpton"]
-    url: https://en.wikipedia.org/wiki/Edwin_Plimpton_Adams
+# _layouts/bib.liquid links an author in _bibliography/papers.bib when this file has an entry under their last name
+# (lowercased, without accents or equal-contribution markers such as *) whose `firstname` list contains their first name.
 
-"podolsky":
-  - firstname: ["Boris", "B.", "B. Y.", "Boris Yakovlevich"]
-    url: https://en.wikipedia.org/wiki/Boris_Podolsky
+"agha-mohammadi":
+  - firstname: ["Ali-akbar"]
+    url: https://aliagha.site/
 
-"rosen":
-  - firstname: ["Nathan", "N."]
-    url: https://en.wikipedia.org/wiki/Nathan_Rosen
+"alama":
+  - firstname: ["Omar"]
+    url: https://oasisartisan.github.io/
 
-"bach":
-  - firstname: ["Johann Sebastian", "J. S."]
-    url: https://en.wikipedia.org/wiki/Johann_Sebastian_Bach
+"bhattacharya":
+  - firstname: ["Avigyan"]
+    url: https://avigyanbh.github.io/
 
-  - firstname: ["Carl Philipp Emanuel", "C. P. E."]
-    url: https://en.wikipedia.org/wiki/Carl_Philipp_Emanuel_Bach
+"chan":
+  - firstname: ["Yu-Hsin"]
+    url: https://www.ri.cmu.edu/alumni/yu-hsin-chan/
 
-"przibram":
-  - firstname: ["Karl"]
-    url: https://link.springer.com/article/10.1007/s00016-019-00242-z
+"dannemiller":
+  - firstname: ["Justin"]
+    url: https://justin-dannemiller.github.io/
 
-"schrodinger":
-  - firstname: ["Erwin"]
-    url: https://en.wikipedia.org/wiki/Erwin_Schr%C3%B6dinger
+# {FieldAI} in papers.bib is an organization, which has no first name
+"fieldai":
+  - firstname: [""]
+    url: https://www.fieldai.com
 
-"lorentz":
-  - firstname: ["Hendrik Antoon"]
-    url: https://en.wikipedia.org/wiki/Hendrik_Lorentz
+"garg":
+  - firstname: ["Chinmay"]
+    url: https://www.chinmayg.com/
 
-"planck":
+"han":
+  - firstname: ["Qin"]
+    url: https://www.ri.cmu.edu/alumni/qin-han/
+
+"ho":
+  - firstname: ["Cherie"]
+    url: https://cherieho.com
+
+"hu":
+  - firstname: ["Hanzhe"]
+    url: https://hzhupku.github.io/
+
+"keetha":
+  - firstname: ["Nikhil"]
+    url: https://nik-v9.github.io/
+
+"kim":
+  - firstname: ["Dong-Ki"]
+    url: https://dkkim93.github.io/
+
+  - firstname: ["Seungchan"]
+    url: https://seungchan-kim.github.io/
+
+"kuo":
+  - firstname: ["Sonic"]
+    url: https://www.ri.cmu.edu/alumni/chien-liang-kuo/
+
+"liao":
+  - firstname: ["Chiawen"]
+    url: https://www.ri.cmu.edu/alumni/chiawen-liao/
+
+"mcgann":
+  - firstname: ["Daniel"]
+    url: https://danmcgann.com/
+
+"omidshafiei":
+  - firstname: ["Shayegan"]
+    url: https://www.fieldai.com/team
+
+"patrikar":
+  - firstname: ["Jay"]
+    url: https://www.jaypatrikar.me/
+
+"pulling":
+  - firstname: ["Conner"]
+    url: https://theairlab.org/team/alumni/conner/
+
+"qiu":
+  - firstname: ["Yuheng"]
+    url: https://haleqiu.github.io/
+
+"ramakrishnan":
+  - firstname: ["Aditya"]
+    url: https://adi-11797.github.io/
+
+"scherer":
+  - firstname: ["Sebastian"]
+    url: https://theairlab.org/team/sebastian
+
+"smith":
   - firstname: ["Max"]
-    url: https://en.wikipedia.org/wiki/Max_Planck
+    url: https://www.maxosmith.com/
+
+"tan":
+  - firstname: ["Jeff"]
+    url: https://jefftan969.github.io/
+
+"trevino":
+  - firstname: ["Eduardo"]
+    url: https://www.eduardotrevino.me/
+
+"tuan":
+  - firstname: ["Chao-I"]
+    url: https://www.ri.cmu.edu/alumni/chaoi-tuan/
+
+"wang":
+  - firstname: ["Wenshan"]
+    url: http://www.wangwenshan.com/
+
+  - firstname: ["Yuanhao"]
+    url: https://harrywang355.github.io/
+
+"zabounidis":
+  - firstname: ["Renos"]
+    url: https://renos.github.io/
