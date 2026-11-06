@@ -42,9 +42,25 @@
   - firstname: ["Hanzhe"]
     url: https://hzhupku.github.io/
 
+"iyer":
+  - firstname: ["Abhishek"]
+    url: https://abhishek-iyer1.github.io/
+
+"karhade":
+  - firstname: ["Jay"]
+    url: https://jaykarhade.github.io/
+
+"kedia":
+  - firstname: ["Kabir"]
+    url: https://theairlab.org/team/past_members/kabir_kedia/
+
 "keetha":
   - firstname: ["Nikhil"]
     url: https://nik-v9.github.io/
+
+"khanna":
+  - firstname: ["Karan"]
+    url: https://www.ri.cmu.edu/ri-people/karan-khanna/
 
 "kim":
   - firstname: ["Dong-Ki"]
@@ -61,6 +77,10 @@
   - firstname: ["Chiawen"]
     url: https://www.ri.cmu.edu/alumni/chiawen-liao/
 
+"marcelo":
+  - firstname: ["Guilherme"]
+    url: https://guilherme-marcello.github.io/
+
 "mcgann":
   - firstname: ["Daniel"]
     url: https://danmcgann.com/
@@ -69,9 +89,21 @@
   - firstname: ["Shayegan"]
     url: https://www.fieldai.com/team
 
+"palghat parameswaran":
+  - firstname: ["Narayanan"]
+    url: https://narayananpp.github.io/
+
 "patrikar":
   - firstname: ["Jay"]
     url: https://www.jaypatrikar.me/
+
+"peng":
+  - firstname: ["Xue Bin"]
+    url: https://xbpeng.github.io/
+
+"peri":
+  - firstname: ["Neehar"]
+    url: https://www.neeharperi.com/
 
 "pulling":
   - firstname: ["Conner"]
@@ -84,6 +116,10 @@
 "ramakrishnan":
   - firstname: ["Aditya"]
     url: https://adi-11797.github.io/
+
+"ramanan":
+  - firstname: ["Deva"]
+    url: https://www.cs.cmu.edu/~deva/
 
 "scherer":
   - firstname: ["Sebastian"]
@@ -115,3 +151,7 @@
 "zabounidis":
   - firstname: ["Renos"]
     url: https://renos.github.io/
+
+"zhou":
+  - firstname: ["Jinyao"]
+    url: https://www.ri.cmu.edu/ri-people/jinyao-zhou/
