@@ -19,7 +19,7 @@ selected_papers: true # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 ---
 
-Hi! My name is 何昊洋 (hé hào yáng). I'm a researcher at [FieldAI](https://fieldai.com) working on Humanoid Whole-Body Loco-Manipulation and Field Foundation Models.
+Hi! My name is 何昊洋 (hé hào yáng). I'm a researcher at [FieldAI](https://fieldai.com) working on Humanoid Whole-Body Loco-Manipulation and Field Foundation Models. **I'm applying for PhD opportunities with 2027 start, please reach out if you're interested!**
 
 I recently completed my master's at the Carnegie Mellon University Robotics Institute (MRSD). At the CMU [AirLab](https://theairlab.org), I worked on VLM-based planning and spatial understanding. I was also a research intern at [FieldAI](https://fieldai.com), and worked on grounded world models. I'm very lucky to have worked under [Sebastian Scherer](https://theairlab.org/team/sebastian) and [Shayegan Omidshafiei](https://www.fieldai.com/team) and to have been mentored by [Cherie Ho](https://cherieho.com), [Jay Patrikar](https://www.jaypatrikar.me/), and [Dong-Ki Kim](https://dkkim93.github.io/).
 
