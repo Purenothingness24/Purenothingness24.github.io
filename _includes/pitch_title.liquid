@@ -1,0 +1,10 @@
+{%- comment -%}
+  A pitch-deck title such as "Video World Models / Semantic Scene Understanding", one span per topic (.pitch-topic in
+  assets/css/pitch.scss). Non-breaking hyphens keep a word like "Whole-Body" whole where the title wraps. No title, no
+  output, so the title element stays :empty. Liquid drops a block that holds nothing but whitespace, hence {{ ' ' }}.
+{%- endcomment -%}
+{%- assign topics = include.title | split: ' / ' -%}
+{%- for topic in topics -%}
+  {%- unless forloop.first %}{{ ' ' }}{% endunless -%}
+  <span class="pitch-topic">{{ topic | escape | replace: '-', '&#8209;' }}{% unless forloop.last %} /{% endunless %}</span>
+{%- endfor -%}

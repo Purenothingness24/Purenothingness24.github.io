@@ -1,0 +1,128 @@
+---
+layout: pitch
+---
+{% assign about = site.pages | where: 'permalink', '/' | first %}
+{% assign count = page.slides | size %}
+<main class="pitch-deck">
+  {% for slide in page.slides %}
+    {% assign number = forloop.index %}
+    {% if forloop.first %}
+      {% assign prev_number = count %}
+    {% else %}
+      {% assign prev_number = number | minus: 1 %}
+    {% endif %}
+    {% if forloop.last %}
+      {% assign next_number = 1 %}
+    {% else %}
+      {% assign next_number = number | plus: 1 %}
+    {% endif %}
+    <section
+      class="pitch-slide{% if slide.about %} pitch-about{% endif %}"
+      aria-label="Slide {{ number }} of {{ count }}"
+      {% unless forloop.first %}
+        hidden
+      {% endunless %}
+    >
+      <header class="pitch-bar">
+        <a class="pitch-prev" href="#{{ prev_number }}" aria-label="Previous slide">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7" />
+          </svg>
+        </a>
+        <h2 class="pitch-heading">{% include pitch_title.liquid title=slide.title %}</h2>
+        <span class="pitch-count">{{ number }} / {{ count }}</span>
+        <a class="pitch-next" href="#{{ next_number }}" aria-label="Next slide">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      </header>
+
+      {% if slide.about %}
+        <div class="pitch-home">
+          <div class="pitch-me">
+            <img class="pitch-photo" src="{{ about.profile.image | prepend: '/assets/img/' | relative_url | bust_file_cache }}" alt="">
+            <h1 class="pitch-name">
+              {{ site.first_name }}{% if site.middle_name %} {{ site.middle_name }}{% endif %} {{ site.last_name }}
+            </h1>
+            <ul class="pitch-roles">
+              {% for role in page.roles %}
+                <li>{{ role }}</li>
+              {% endfor %}
+            </ul>
+            <ul class="pitch-logos">
+              {% for logo in page.logos %}
+                <li class="pitch-logo-{{ logo.file | split: '.' | first }}">
+                  <img src="{{ logo.file | prepend: '/assets/pitch/logos/' | relative_url | bust_file_cache }}" alt="{{ logo.alt }}">
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+          <section class="pitch-interests">
+            <h2>Research Interests</h2>
+            <div class="pitch-groups">
+              {% for group in page.slides %}
+                {% if group.projects %}
+                  <div class="pitch-group">
+                    <h3>{% include pitch_title.liquid title=group.title %}</h3>
+                    <ul>
+                      {% for project in group.projects %}
+                        {% assign paper = site.data.papers[project.bib] %}
+                        {% assign heading = paper.title | split: ': ' | first %}
+                        <li>
+                          <a href="#{{ forloop.parentloop.index }}">{{ project.name | default: heading }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </section>
+        </div>
+      {% else %}
+        {% assign project_count = slide.projects | size %}
+        <ul class="pitch-grid pitch-grid-{{ project_count }}">
+          {% for project in slide.projects %}
+            {% assign paper = site.data.papers[project.bib] %}
+            {% assign short_title = paper.title | split: ': ' | first %}
+            {% assign name = project.name | default: short_title %}
+            <li class="pitch-project">
+              <div class="pitch-media">
+                <div class="pitch-player">
+                  <video
+                    src="{{ project.video | prepend: '/assets/pitch/' | relative_url | bust_file_cache }}"
+                    poster="{{ project.poster | prepend: '/assets/pitch/' | relative_url | bust_file_cache }}"
+                    aria-label="{{ name | escape }} video"
+                    {% if forloop.parentloop.first %}
+                      autoplay preload="auto"
+                    {% else %}
+                      preload="none"
+                    {% endif %}
+                    muted
+                    loop
+                    playsinline
+                  ></video>
+                  <div class="pitch-progress" aria-hidden="true"><span></span></div>
+                </div>
+              </div>
+              <div class="pitch-caption">
+                <h3 class="pitch-project-name" title="{{ paper.title | escape }}">
+                  {% if paper.website %}
+                    <a href="{{ paper.website }}" target="_blank" rel="noopener">{{ name | escape }}</a>
+                  {% else %}
+                    {{ name | escape }}
+                  {% endif %}
+                </h3>
+                <span class="pitch-venue">{{ project.venue | markdownify | remove: '<p>' | remove: '</p>' | strip }}</span>
+                {% if project.first_author %}
+                  <span class="pitch-badge">1st author</span>
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </section>
+  {% endfor %}
+</main>

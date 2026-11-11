@@ -1,54 +1,36 @@
-// Pitch project pages show one slide at a time, and "#n" in the URL picks slide n. Swiping left or right anywhere
-// changes slides, like the arrow links. Tapping a video pauses or resumes it (iOS Low Power Mode blocks autoplay
-// until then), and dragging a video's progress bar is the only way to scrub.
+// The pitch deck shows one slide at a time, and "#n" in the URL picks slide n. The slides loop: the arrow links,
+// the arrow keys and swiping left or right anywhere step through them in a circle. Tapping a video pauses or
+// resumes it (iOS Low Power Mode blocks autoplay until then), and dragging a video's progress bar is the only way to scrub.
 // Production builds minify this file with Uglifier (jekyll-minifier), which fails on syntax newer than ES2015 such as ??.
 const slides = [...document.querySelectorAll(".pitch-slide")];
 
-// A clip holds one video: a video slide's player, or a video placed on a rendered slide.
-const clipsOf = (root) => [...root.querySelectorAll(".pitch-player, .pitch-clip")];
-const videoOf = (clip) => clip.querySelector("video");
+const playersOf = (root) => [...root.querySelectorAll(".pitch-player")];
+const videoOf = (player) => player.querySelector("video");
 
-const play = (clip) =>
-  videoOf(clip)
+const play = (player) =>
+  videoOf(player)
     .play()
     .catch((error) => {
       // NotAllowedError: autoplay is blocked until a tap. AbortError: a pause or slide change interrupted the start.
       if (error.name !== "NotAllowedError" && error.name !== "AbortError") throw error;
     })
-    .then(() => clip.classList.toggle("is-paused", videoOf(clip).paused));
+    .then(() => player.classList.toggle("is-paused", videoOf(player).paused));
 
-clipsOf(document).forEach((clip) => {
-  const video = videoOf(clip);
-  const slide = clip.closest(".pitch-slide");
+playersOf(document).forEach((player) => {
+  const video = videoOf(player);
+  const slide = player.closest(".pitch-slide");
   const fail = () => reportError(new Error(`Pitch video failed to load: ${video.currentSrc || video.src} (MediaError code ${video.error.code})`));
   if (video.error) fail();
   video.addEventListener("error", fail);
   // Browsers resume the videos they paused while the page was in the background, whatever slide those are on.
-  video.addEventListener("play", () => (slide.hidden ? video.pause() : clip.classList.remove("is-paused")));
-  video.addEventListener("pause", () => clip.classList.add("is-paused"));
-});
-
-document.querySelectorAll(".pitch-player").forEach((player) => {
-  const video = videoOf(player);
-  const fit = () => player.style.setProperty("--ratio", `${video.videoWidth} / ${video.videoHeight}`);
-  if (video.readyState >= HTMLMediaElement.HAVE_METADATA) fit();
-  video.addEventListener("loadedmetadata", fit);
-});
-
-// A slide's videos pause and resume together, so one tap restarts every clip on a rendered slide.
-slides.forEach((slide) => {
-  const clips = clipsOf(slide);
-  clips.forEach((clip) =>
-    clip.addEventListener("click", () => {
-      const resume = clips.some((other) => videoOf(other).paused);
-      clips.forEach((other) => (resume ? play(other) : videoOf(other).pause()));
-    })
-  );
+  video.addEventListener("play", () => (slide.hidden ? video.pause() : player.classList.remove("is-paused")));
+  video.addEventListener("pause", () => player.classList.add("is-paused"));
+  player.addEventListener("click", () => (video.paused ? play(player) : video.pause()));
 });
 
 document.querySelectorAll(".pitch-progress").forEach((bar) => {
-  const clip = bar.closest(".pitch-player, .pitch-clip");
-  const video = videoOf(clip);
+  const player = bar.closest(".pitch-player");
+  const video = videoOf(player);
   // The position the finger has dragged to but the video hasn't started seeking to yet. The bar shows it right away.
   let target = null;
   const render = () => bar.style.setProperty("--progress", video.duration ? (target === null ? video.currentTime : target) / video.duration : 0);
@@ -116,7 +98,7 @@ document.querySelectorAll(".pitch-progress").forEach((bar) => {
       target = null;
     }
     render();
-    if (resume) play(clip);
+    if (resume) play(player);
   };
   bar.addEventListener("pointerup", release);
   bar.addEventListener("pointercancel", release);
@@ -127,24 +109,30 @@ document.querySelectorAll(".pitch-progress").forEach((bar) => {
 const show = () => {
   let number = location.hash ? Number(location.hash.slice(1)) : 1;
   if (!Number.isInteger(number) || number < 1 || number > slides.length) {
-    reportError(new Error(`${location.hash} is not a slide on this page, which has ${slides.length}`));
+    reportError(new Error(`${location.hash} is not a slide in this deck, which has ${slides.length}`));
     number = 1;
   }
-  const active = slides[number - 1];
+  const index = number - 1;
+  const active = slides[index];
   slides.forEach((slide) => {
     slide.hidden = slide !== active;
-    if (slide.hidden) clipsOf(slide).forEach((clip) => videoOf(clip).pause());
+    if (slide.hidden) playersOf(slide).forEach((player) => videoOf(player).pause());
   });
-  [active, slides[number]].forEach((slide) => slide && clipsOf(slide).forEach((clip) => (videoOf(clip).preload = "auto")));
+  // The deck loops, so the slides on both sides are one swipe away.
+  [index, (index + 1) % slides.length, (index + slides.length - 1) % slides.length].forEach((neighbour) =>
+    playersOf(slides[neighbour]).forEach((player) => (videoOf(player).preload = "auto"))
+  );
   // Start right away: browsers throttle rendering, so waiting for frames can delay the start by seconds. A browser that
   // refuses a muted video started while it still considers the slide hidden gets a second start once it's laid out.
-  clipsOf(active).forEach(play);
+  playersOf(active).forEach(play);
   requestAnimationFrame(() =>
     requestAnimationFrame(() => {
-      if (!active.hidden) clipsOf(active).forEach(play);
+      if (!active.hidden) playersOf(active).forEach(play);
     })
   );
 };
+
+const step = (direction) => slides.find((slide) => !slide.hidden).querySelector(direction > 0 ? ".pitch-next" : ".pitch-prev").click();
 
 const deck = document.querySelector(".pitch-deck");
 if (deck) {
@@ -154,6 +142,11 @@ if (deck) {
     if (event.persisted) show();
   });
   show();
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowRight") step(1);
+    if (event.key === "ArrowLeft") step(-1);
+  });
 
   let start = null;
   let swipedAt = -Infinity;
@@ -170,8 +163,7 @@ if (deck) {
     start = null;
     if (Math.abs(dx) < 40 || Math.abs(dx) < 1.5 * Math.abs(dy)) return;
     swipedAt = event.timeStamp;
-    const link = slides.find((slide) => !slide.hidden).querySelector(dx < 0 ? ".pitch-next" : ".pitch-prev");
-    if (link) link.click();
+    step(dx < 0 ? 1 : -1);
   });
   // A mouse swipe ends in a click on whatever is under the pointer, which must not also pause a video.
   deck.addEventListener(

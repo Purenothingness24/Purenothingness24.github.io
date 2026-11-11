@@ -1,9 +1,5 @@
 ---
 ---
-{% if page.layout == 'pitch-slide' %}
-  {% assign pitch_slug = page.url | split: '/' | last %}
-  {% include pitch_entry.liquid slug=pitch_slug %}
-{% endif %}
 <!doctype html>
 <html lang="{{ site.lang }}">
   <head>
@@ -14,7 +10,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Pitch">
-    <title>{% if pitch_name %}{{ pitch_name }} | {% endif %}{{ site.first_name }} {{ site.last_name }}</title>
+    <title>{{ site.first_name }} {{ site.last_name }}</title>
     {% assign pitch_icon = site.icon | prepend: '/assets/img/' | relative_url | bust_file_cache %}
     <link rel="icon" href="{{ pitch_icon }}">
     <link rel="apple-touch-icon" href="{{ pitch_icon }}">

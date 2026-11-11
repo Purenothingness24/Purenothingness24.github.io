@@ -3,8 +3,9 @@
 
 @charset "utf-8";
 
-// The hidden elevator-pitch deck (/pitch/), laid out for a landscape iPhone 13 (844×390 CSS px) held at arm's length:
-// large type, no scrolling, and videos as large as the screen allows. Colors and fonts follow the main site.
+// The hidden elevator-pitch deck (/pitch/): full-screen slides for a computer screen or a landscape phone (iPhone 13:
+// 844×390 CSS px), with no scrolling. Sizes follow the screen height (dvh), so a slide keeps its proportions on any
+// screen, and the px minimums keep the text readable on a phone. Colors and fonts follow the main site.
 
 @import "variables", "themes";
 
@@ -39,6 +40,7 @@ body {
 h1,
 h2,
 h3,
+p,
 ul {
   margin: 0;
 }
@@ -53,148 +55,8 @@ a {
   text-decoration: none;
 }
 
-.pitch-home,
-.pitch-slide {
-  height: 100dvh;
-  padding: max(12px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom))
-    max(20px, env(safe-area-inset-left));
-}
-
-// Main page: photo beside the name, roles and logos, then the research interests in two columns, each listing its
-// projects in a row.
-
-.pitch-home {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: clamp(10px, 4.5dvh, 24px);
-}
-
-.pitch-me {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-rows: 1fr auto auto auto 1fr;
-  grid-template-areas:
-    "photo ."
-    "photo name"
-    "photo roles"
-    "photo logos"
-    "photo .";
-  column-gap: clamp(12px, 4dvh, 20px);
-}
-
-.pitch-photo {
-  grid-area: photo;
-  width: clamp(84px, 28dvh, 132px);
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 0.25rem;
-  box-shadow:
-    0 2px 5px 0 rgba(0, 0, 0, 0.16),
-    0 2px 10px 0 rgba(0, 0, 0, 0.12);
-}
-
-.pitch-name {
-  grid-area: name;
-  font-size: clamp(26px, 9.5dvh, 44px);
-  font-weight: 300;
-  line-height: 1.1;
-
-  span {
-    font-weight: 700;
-  }
-}
-
-.pitch-roles {
-  grid-area: roles;
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 0.3em;
-  font-size: clamp(14px, 4.4dvh, 19px);
-
-  li + li::before {
-    content: "·";
-    margin: 0 0.5em;
-    color: var(--global-text-color-light);
-  }
-}
-
-// White tiles keep every logo's own colors legible in the dark theme too.
-.pitch-logos {
-  grid-area: logos;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: clamp(6px, 2.2dvh, 12px);
-
-  li {
-    display: flex;
-    align-items: center;
-    height: clamp(24px, 8dvh, 34px);
-    padding: 4px 8px;
-    border: 1px solid var(--global-divider-color);
-    border-radius: 0.25rem;
-    background-color: $white-color;
-  }
-
-  img {
-    display: block;
-    height: 100%;
-  }
-
-  // The wordmark is all lettering, so it reads larger than the other logos at the same height.
-  .pitch-logo-cmu img {
-    height: 58%;
-  }
-}
-
-.pitch-interests h2 {
-  margin-bottom: clamp(6px, 2.5dvh, 12px);
-  font-size: clamp(11px, 3.2dvh, 13px);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--global-text-color-light);
-}
-
-.pitch-groups {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(10px, 4dvh, 18px) clamp(24px, 5vw, 56px);
-}
-
-.pitch-group {
-  h3 {
-    margin-bottom: clamp(5px, 1.8dvh, 10px);
-    font-size: clamp(13px, 4dvh, 17px);
-    font-weight: 500;
-  }
-
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(5px, 1.6dvh, 8px);
-  }
-
-  a {
-    display: inline-flex;
-    align-items: center;
-    min-height: clamp(32px, 9.8dvh, 42px);
-    padding: 0 0.8em;
-    border: 1px solid var(--global-theme-color);
-    border-radius: 0.25rem;
-    font-size: clamp(14px, 4.4dvh, 18px);
-    font-weight: 500;
-
-    &:active {
-      color: var(--global-hover-text-color);
-      background-color: var(--global-theme-color);
-    }
-  }
-}
-
-// Project page: its slides, one shown at a time by assets/js/pitch.js. A video slide has the project name and
-// venue above the video; an image slide shows a rendered slide or figure on that slide's own background color.
+// One slide at a time (assets/js/pitch.js): the title bar with the looping arrows and the slide's number, then the
+// slide's content filling the rest of the screen. Very wide screens get side margins instead of stretched slides.
 
 .pitch-deck {
   // Horizontal swipes change slides, so the browser must not claim them for panning or zooming.
@@ -203,62 +65,96 @@ a {
 
 .pitch-slide {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) 44px;
   grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas:
-    "overview title count"
-    "prev stage next";
-  gap: clamp(4px, 2dvh, 10px) 8px;
+  row-gap: clamp(8px, 3dvh, 40px);
+  height: 100dvh;
+  max-width: calc(100dvh * 2.3);
+  margin-inline: auto;
+  padding: max(clamp(10px, 3dvh, 44px), env(safe-area-inset-top)) max(clamp(20px, 4.5dvh, 72px), env(safe-area-inset-right))
+    max(clamp(10px, 3dvh, 44px), env(safe-area-inset-bottom)) max(clamp(20px, 4.5dvh, 72px), env(safe-area-inset-left));
 
   &[hidden] {
     display: none;
   }
+
+  &:not([hidden]) {
+    animation: pitch-enter 0.28s ease-out;
+  }
 }
 
-.pitch-title {
-  grid-area: title;
-  align-self: center;
-  font-size: clamp(18px, 6.4dvh, 27px);
+@keyframes pitch-enter {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pitch-slide:not([hidden]) {
+    animation: none;
+  }
+}
+
+// Equal columns on both sides keep the title centered between the back arrow and the count with the next arrow.
+.pitch-bar {
+  --nav: clamp(36px, 5.5dvh, 64px);
+  display: grid;
+  grid-template-columns: var(--nav) var(--nav) minmax(0, 1fr) var(--nav) var(--nav);
+  grid-template-areas: "prev . heading count next";
+  align-items: center;
+}
+
+.pitch-heading {
+  grid-area: heading;
+  font-size: clamp(16px, 5dvh, 60px);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   text-align: center;
   text-wrap: balance;
+
+  // An accent rule under the slide's title.
+  &:not(:empty)::after {
+    content: "";
+    display: block;
+    width: 2.4em;
+    height: max(3px, 0.11em);
+    margin: 0.3em auto 0;
+    border-radius: 1em;
+    background-color: var(--global-theme-color);
+  }
 }
 
-.pitch-venue {
-  font-size: 0.8em;
-  font-weight: 400;
-  color: var(--global-theme-color);
+// A title's topics (_includes/pitch_title.liquid), so a title that has to wrap breaks between its topics before it
+// breaks inside one.
+.pitch-topic {
+  display: inline-block;
 }
 
-.pitch-overview,
+.pitch-count {
+  grid-area: count;
+  font-size: clamp(12px, 1.9dvh, 20px);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: center;
+  color: var(--global-text-color-light);
+}
+
 .pitch-prev,
 .pitch-next {
   display: grid;
   place-items: center;
-  color: var(--slide-ink, var(--global-text-color-light));
+  height: var(--nav);
+  color: var(--global-text-color-light);
 
+  &:hover,
   &:active {
     color: var(--global-theme-color);
   }
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: clamp(22px, 3.6dvh, 40px);
+    height: clamp(22px, 3.6dvh, 40px);
   }
-}
-
-.pitch-overview {
-  grid-area: overview;
-  height: 36px;
-}
-
-.pitch-count {
-  grid-area: count;
-  place-self: center;
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  color: var(--slide-ink, var(--global-text-color-light));
 }
 
 .pitch-prev {
@@ -269,24 +165,86 @@ a {
   grid-area: next;
 }
 
-.pitch-stage {
-  grid-area: stage;
+// Project slides: each project is its video with a short caption centered beneath it (the project's name, venue and
+// "1st author"). Three or four projects make a 2×2 grid; a third project is centered on its own row. One or two
+// projects stand side by side, each video as wide as its column.
+
+.pitch-grid {
+  --col-gap: clamp(14px, 3dvh, 44px);
+  // Between a video and its caption; the progress bar's hit area reaches into it.
+  --caption-gap: clamp(6px, 1.5dvh, 18px);
   display: grid;
-  place-items: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--col-gap);
+  min-height: 0;
+}
+
+.pitch-grid-1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.pitch-project {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+// In the 2×2 grid, each row of tiles is a video track and a caption track, with a spacer track between the rows. The
+// tiles share these tracks (subgrid), so both video tracks get the same height whichever caption needs a second line,
+// and all the videos come out the same size.
+.pitch-grid-3,
+.pitch-grid-4 {
+  grid-template-rows: minmax(0, 1fr) auto clamp(12px, 3dvh, 40px) minmax(0, 1fr) auto;
+
+  .pitch-project {
+    grid-row: 1 / span 2;
+    grid-template-rows: subgrid;
+  }
+
+  .pitch-project:nth-child(n + 3) {
+    grid-row: 4 / span 2;
+  }
+}
+
+.pitch-grid-3 .pitch-project:last-child {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: calc((100% - var(--col-gap)) / 2);
+}
+
+// The video's box takes the height of its track, and the video the largest 16:9 area in it, resting on the caption.
+.pitch-media {
+  display: grid;
+  place-items: end center;
+  min-height: 0;
   container-type: size;
 }
 
+// One or two projects are always limited by their column's width, so their tiles take the height they need and center
+// on the slide together.
+.pitch-grid-1,
+.pitch-grid-2 {
+  align-content: center;
+
+  .pitch-project {
+    grid-template-rows: auto auto;
+  }
+
+  .pitch-media {
+    container-type: inline-size;
+  }
+}
+
 .pitch-player {
-  // assets/js/pitch.js replaces this with the video's own aspect ratio once its metadata loads.
-  --ratio: 16 / 9;
   position: relative;
-  width: min(100cqw, 100cqh * var(--ratio));
-  aspect-ratio: var(--ratio);
-  border-radius: 0.25rem;
+  width: min(100cqw, 100cqh * 16 / 9);
+  aspect-ratio: 16 / 9;
+  border-radius: clamp(6px, 1.2dvh, 16px);
   background-color: $black-color;
   box-shadow:
-    0 2px 5px 0 rgba(0, 0, 0, 0.16),
-    0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    0 2px 6px rgba(0, 0, 0, 0.14),
+    0 10px 28px rgba(0, 0, 0, 0.14);
   cursor: pointer;
 
   // The video rounds its own corners because the player can't clip: the progress bar reaches below it.
@@ -302,13 +260,13 @@ a {
     content: "";
     position: absolute;
     inset: 0;
-    width: 76px;
-    height: 76px;
+    width: clamp(44px, 10dvh, 112px);
+    height: clamp(44px, 10dvh, 112px);
     margin: auto;
     border-radius: 50%;
     background: rgba(0, 0, 0, 0.6)
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M8 5.5v13l11-6.5z'/%3E%3C/svg%3E")
-      56% center / 38px no-repeat;
+      56% center / 50% no-repeat;
     opacity: 0;
     transition: opacity 0.2s;
     pointer-events: none;
@@ -319,20 +277,27 @@ a {
   }
 }
 
-// Dragging the bar is the only way to scrub (assets/js/pitch.js). Its line runs along the bottom edge of the video, and
-// its hit area is a finger's 44px tall, reaching 12px (the slide's smallest bottom padding) below the video so that a
-// finger landing just under the line still grabs the bar instead of swiping.
+.pitch-grid-1 .pitch-player,
+.pitch-grid-2 .pitch-player {
+  width: 100cqw;
+}
+
+// Dragging the bar is the only way to scrub (assets/js/pitch.js). Its line runs along the bottom edge of the video, inset
+// from the rounded corners, and its hit area reaches into the gap below the video, so a finger landing just under the
+// line still grabs the bar instead of swiping, while a tap on most of the video still pauses it.
 .pitch-progress {
   position: absolute;
-  inset: auto 0 -12px;
-  height: 44px;
+  inset: auto clamp(6px, 1.2dvh, 16px) calc(-1 * var(--caption-gap));
+  height: clamp(30px, 5dvh, 48px);
   touch-action: none;
+  cursor: ew-resize;
 
   &::before,
   span {
     position: absolute;
-    inset: auto 0 12px;
-    height: 4px;
+    inset: auto 0 calc(var(--caption-gap) + clamp(4px, 0.8dvh, 10px));
+    height: clamp(3px, 0.5dvh, 5px);
+    border-radius: 1em;
   }
 
   &::before {
@@ -346,94 +311,292 @@ a {
     transform-origin: left;
   }
 
+  &:hover::before,
+  &:hover span,
   &.is-scrubbing::before,
   &.is-scrubbing span {
-    height: 8px;
+    height: clamp(6px, 0.9dvh, 9px);
   }
 }
 
-// A clip's bar is thinner, and its hit area shorter so that a tap on most of a small clip still pauses it. The line runs
-// along the straight part of the clip's bottom edge, inside any rounded corners (--bar-inset) and outline (--bar-bottom).
-.pitch-clip .pitch-progress {
-  inset: auto var(--bar-inset, 0) var(--bar-bottom, 0);
-  height: 20px;
+// The name, then the venue as a filled pill in the theme color so it reads at a glance, and "1st author" as an
+// outlined pill. They share a line when it fits and wrap, centered, when it doesn't. They sit at the top of their
+// caption track, which is as tall as the longest caption in its row, so a shorter caption stays right under its video.
+.pitch-caption {
+  display: flex;
+  flex-wrap: wrap;
+  place-content: start center;
+  align-items: center;
+  gap: 0.35em 0.55em;
+  min-width: 0;
+  padding-top: var(--caption-gap);
+  font-size: clamp(10.5px, 2.1dvh, 23px);
+  line-height: 1.25;
+  text-align: center;
+}
 
-  &::before,
-  span {
-    bottom: 0;
-    height: 2px;
-  }
+// A linked name opens the project's website; hovering it shows the full title.
+.pitch-project-name {
+  font-size: clamp(14px, 2.9dvh, 34px);
+  font-weight: 600;
+  line-height: 1.2;
 
-  &.is-scrubbing::before,
-  &.is-scrubbing span {
-    height: 4px;
+  a {
+    color: var(--global-text-color);
+
+    &:hover,
+    &:active {
+      color: var(--global-theme-color);
+    }
   }
 }
 
-.pitch-slide.image {
-  grid-template-columns: minmax(32px, 1fr) auto minmax(32px, 1fr);
-  grid-template-rows: 36px minmax(0, 1fr) 36px;
+.pitch-venue,
+.pitch-badge {
+  padding: 0.2em 0.6em;
+  border: max(1.5px, 0.08em) solid var(--global-theme-color);
+  border-radius: 0.4em;
+  font-weight: 700;
+}
+
+.pitch-venue {
+  color: var(--global-hover-text-color);
+  background-color: var(--global-theme-color);
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+}
+
+.pitch-badge {
+  color: var(--global-theme-color);
+}
+
+// About slide: photo beside the name, roles and logos, then the research interests in two columns, each listing its
+// projects as links to the slide that shows them.
+
+.pitch-home {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(8px, 3dvh, 48px);
+  min-height: 0;
+}
+
+.pitch-me {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: 1fr auto auto auto 1fr;
   grid-template-areas:
-    "overview stage count"
-    "prev stage next"
-    ". stage .";
-  container-type: size;
-  background-color: var(--slide-bg);
+    "photo ."
+    "photo name"
+    "photo roles"
+    "photo logos"
+    "photo .";
+  column-gap: clamp(12px, 4dvh, 56px);
+}
 
-  .pitch-stage {
-    container-type: normal;
+.pitch-photo {
+  grid-area: photo;
+  width: clamp(84px, 26dvh, 300px);
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: clamp(4px, 1.2dvh, 16px);
+  box-shadow:
+    0 2px 5px 0 rgba(0, 0, 0, 0.16),
+    0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.pitch-name {
+  grid-area: name;
+  font-size: clamp(26px, 8.5dvh, 96px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.pitch-roles {
+  grid-area: roles;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 0.3em;
+  font-size: clamp(14px, 3.6dvh, 40px);
+
+  li + li::before {
+    content: "·";
+    margin: 0 0.5em;
+    color: var(--global-text-color-light);
   }
 }
 
-// The largest box with the slide's aspect ratio beside the two 32px side columns and their 8px gaps.
-.pitch-frame {
-  position: relative;
-  width: min(100cqw - 80px, 100cqh * var(--ratio));
-  aspect-ratio: var(--ratio);
-  container-type: inline-size;
+// White tiles keep every logo's own colors legible in the dark theme too.
+.pitch-logos {
+  grid-area: logos;
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(8px, 1.6dvh, 20px);
+  margin-top: clamp(6px, 2.2dvh, 28px);
+
+  li {
+    display: flex;
+    align-items: center;
+    height: clamp(24px, 7dvh, 76px);
+    padding: clamp(4px, 1dvh, 12px) clamp(8px, 2dvh, 24px);
+    border: 1px solid var(--global-divider-color);
+    border-radius: clamp(4px, 0.8dvh, 10px);
+    background-color: $white-color;
+  }
 
   img {
     display: block;
-    width: 100%;
     height: 100%;
+  }
+
+  // The wordmark is all lettering, so it reads larger than the other logos at the same height.
+  .pitch-logo-cmu img {
+    height: 58%;
   }
 }
 
-// A video placed on a rendered slide at the position, size and shape it has on the original slide.
-.pitch-clip {
-  position: absolute;
-  overflow: hidden;
-  cursor: pointer;
+.pitch-interests h2 {
+  margin-bottom: clamp(5px, 1.8dvh, 24px);
+  font-size: clamp(11px, 2.4dvh, 26px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--global-text-color-light);
+}
 
-  video {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
+// The groups side by side share one row for their titles and the next for their chips (subgrid), so the chips line up
+// even when only one of the titles wraps. Each title rests on its chips.
+.pitch-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 4dvh, 48px) clamp(24px, 5vw, 96px);
+}
+
+.pitch-group {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: clamp(5px, 1.8dvh, 22px);
+
+  h3 {
+    align-self: end;
+    font-size: clamp(13px, 3.2dvh, 34px);
+    font-weight: 500;
+    text-wrap: balance;
   }
 
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    width: 36px;
-    height: 36px;
-    margin: auto;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.6)
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M8 5.5v13l11-6.5z'/%3E%3C/svg%3E")
-      56% center / 18px no-repeat;
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(5px, 1.6dvh, 18px);
   }
 
-  &.is-paused::after {
-    opacity: 1;
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: clamp(28px, 6.5dvh, 70px);
+    padding: 0 0.8em;
+    border: max(1px, 0.06em) solid var(--global-theme-color);
+    border-radius: clamp(4px, 0.8dvh, 10px);
+    font-size: clamp(13px, 3dvh, 32px);
+    font-weight: 500;
+
+    &:hover,
+    &:active {
+      color: var(--global-hover-text-color);
+      background-color: var(--global-theme-color);
+    }
   }
 }
 
+// A landscape phone: little height, so the title's accent rule goes and the pills shrink.
+@media (orientation: landscape) and (max-height: 500px) {
+  .pitch-heading::after {
+    content: none;
+  }
+
+  .pitch-caption {
+    gap: 0.3em 0.45em;
+  }
+
+  .pitch-venue,
+  .pitch-badge {
+    padding: 0.12em 0.45em;
+  }
+}
+
+// Portrait: the projects stack in one column, each video as wide as the screen, and the slide scrolls vertically;
+// horizontal swipes still change slides. The screen's width, not its height, limits the text here, so the title gets a
+// row of its own under the arrows and the slide's number, and the title and captions are sized by the width.
 @media (orientation: portrait) {
+  .pitch-deck {
+    touch-action: pan-y;
+  }
+
+  .pitch-slide {
+    height: auto;
+    min-height: 100dvh;
+    padding-inline: max(20px, env(safe-area-inset-left)) max(20px, env(safe-area-inset-right));
+  }
+
+  .pitch-bar {
+    grid-template-columns: var(--nav) minmax(0, 1fr) var(--nav);
+    grid-template-areas:
+      "prev count next"
+      "heading heading heading";
+  }
+
+  .pitch-heading {
+    font-size: clamp(22px, 6.5vw, 40px);
+  }
+
+  .pitch-caption {
+    font-size: clamp(12px, 3.6vw, 18px);
+  }
+
+  .pitch-project-name {
+    font-size: clamp(16px, 5vw, 26px);
+  }
+
+  .pitch-grid,
+  .pitch-grid-3,
+  .pitch-grid-4 {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    align-content: start;
+    row-gap: 26px;
+  }
+
+  .pitch-grid-3 .pitch-project:nth-child(n),
+  .pitch-grid-4 .pitch-project:nth-child(n) {
+    grid-row: auto;
+    grid-template-rows: auto auto;
+  }
+
+  .pitch-grid-3 .pitch-project:last-child {
+    grid-column: auto;
+    justify-self: stretch;
+    width: auto;
+  }
+
+  .pitch-project {
+    grid-template-rows: auto auto;
+  }
+
+  .pitch-media {
+    container-type: normal;
+  }
+
+  .pitch-player,
+  .pitch-grid-1 .pitch-player,
+  .pitch-grid-2 .pitch-player {
+    width: 100%;
+  }
+
   .pitch-home {
     gap: 36px;
   }
@@ -458,10 +621,20 @@ a {
   .pitch-roles {
     flex-direction: column;
     margin-top: 16px;
+    font-size: clamp(15px, 4.6vw, 24px);
 
     li + li::before {
       content: none;
     }
+  }
+
+  .pitch-logos li {
+    height: clamp(34px, 10vw, 52px);
+    padding: 6px 12px;
+  }
+
+  .pitch-interests h2 {
+    font-size: clamp(12px, 3.6vw, 18px);
   }
 
   .pitch-groups {
@@ -469,39 +642,14 @@ a {
     row-gap: 22px;
   }
 
-  .pitch-slide {
-    grid-template-rows: auto 1fr auto auto auto 1fr;
-    grid-template-areas:
-      "overview . count"
-      ". . ."
-      "title title title"
-      "stage stage stage"
-      "prev . next"
-      ". . .";
-  }
+  .pitch-group {
+    h3 {
+      font-size: clamp(16px, 5vw, 24px);
+    }
 
-  .pitch-slide.image {
-    grid-template-columns: 44px minmax(0, 1fr) 44px;
-    grid-template-rows: auto 1fr auto auto 1fr;
-    grid-template-areas:
-      "overview . count"
-      ". . ."
-      "stage stage stage"
-      "prev . next"
-      ". . .";
-  }
-
-  .pitch-prev,
-  .pitch-next {
-    height: 44px;
-  }
-
-  .pitch-stage {
-    container-type: normal;
-  }
-
-  .pitch-player,
-  .pitch-frame {
-    width: 100%;
+    a {
+      min-height: clamp(36px, 10vw, 48px);
+      font-size: clamp(14px, 4.2vw, 20px);
+    }
   }
 }

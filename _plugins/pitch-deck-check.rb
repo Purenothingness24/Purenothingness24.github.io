@@ -1,162 +1,105 @@
-require 'bibtex'
-
 module Jekyll
-  # The hidden pitch deck (_pages/pitch/) is rendered from front matter by _layouts/pitch-home.liquid and
-  # pitch-slide.liquid, where Liquid renders a misspelled field, a slug without a slide page, or a bib key
-  # missing from papers.bib as blank. Fail the build instead, naming the offending page.
+  # The hidden pitch deck (_pages/pitch/index.md) is rendered from its front matter by _layouts/pitch-deck.liquid,
+  # where Liquid renders a misspelled field, a missing file or an unknown bib key as a blank or broken tile. Fail the
+  # build instead, naming the offending slide and project. Runs after BibData (_plugins/bib-data.rb) fills
+  # site.data.papers.
   class PitchDeckCheck < Generator
     safe true
+    priority :low
 
-    HOME_FIELDS = %w[layout permalink sitemap roles logos groups].freeze
+    DECK_FIELDS = %w[layout permalink sitemap roles logos slides].freeze
     LOGO_FIELDS = %w[file alt].freeze
-    GROUP_FIELDS = %w[name slides].freeze
-    SLIDE_REQUIRED_FIELDS = %w[layout permalink sitemap slides].freeze
-    SLIDE_OPTIONAL_FIELDS = %w[bib title venue].freeze
-    VIDEO_SLIDE_FIELDS = %w[video poster].freeze
-    IMAGE_SLIDE_REQUIRED_FIELDS = %w[image ratio background].freeze
-    IMAGE_SLIDE_OPTIONAL_FIELDS = %w[ink videos].freeze
-    CLIP_REQUIRED_FIELDS = %w[file box].freeze
-    CLIP_OPTIONAL_FIELDS = %w[radius outline].freeze
-    COLOR = /\A#\h{6}\z/.freeze
-    RATIO = %r{\A\d+(\.\d+)? / \d+(\.\d+)?\z}.freeze
+    PROJECTS_SLIDE_FIELDS = %w[title projects].freeze
+    ABOUT_SLIDE_FIELDS = %w[about].freeze
+    PROJECT_REQUIRED_FIELDS = %w[bib venue video poster].freeze
+    PROJECT_OPTIONAL_FIELDS = %w[name first_author].freeze
+    PAPER_FIELDS = %w[title].freeze
+    URL = %r{\Ahttps?://\S+\z}.freeze
     MEDIA_DIR = File.join('assets', 'pitch')
     LOGO_DIR = File.join(MEDIA_DIR, 'logos')
 
     def generate(site)
       @site = site
-      pages = site.pages.group_by { |page| page.data['layout'] }
-      homes = pages.fetch('pitch-home', [])
-      slides = pages.fetch('pitch-slide', [])
-      return if homes.empty? && slides.empty?
+      decks = site.pages.select { |page| page.data['layout'] == 'pitch-deck' }
+      return if decks.empty?
 
-      unless homes.size == 1
-        raise Errors::FatalException, "Pitch deck: expected one page with layout pitch-home, found #{homes.map(&:path)}"
-      end
+      raise Errors::FatalException, "Pitch deck: expected one page with layout pitch-deck, found #{decks.map(&:path)}" unless decks.size == 1
 
-      home = homes.first
-      slide_urls = check_home(home).map { |slug| "#{home.url}#{slug}/" }
-      slides_by_url = slides.to_h { |slide| [slide.url, slide] }
+      @page = decks.first
+      check_fields(@page.data, DECK_FIELDS, [], 'front matter')
+      error("set 'sitemap: false' to keep the hidden deck out of the sitemap") unless @page.data['sitemap'] == false
+      error("'roles' must be a non-empty list") unless non_empty_list?(@page.data['roles'])
+      check_logos(@page.data['logos'])
 
-      missing = slide_urls - slides_by_url.keys
-      error(home, "no pitch-slide page has the permalink #{missing.join(', ')}") unless missing.empty?
-      unlisted = slides_by_url.keys - slide_urls
-      error(home, "'groups' does not list the slide page(s) at #{unlisted.join(', ')}") unless unlisted.empty?
-
-      scholar = site.config['scholar']
-      @bib_path = File.join(site.source, scholar['source'], scholar['bibliography'])
-      @bibliography = BibTeX.open(@bib_path)
-      slides.each { |slide| check_slide(slide) }
+      slides = @page.data['slides']
+      error("'slides' must be a non-empty list") unless non_empty_list?(slides)
+      slides.each_with_index { |slide, index| check_slide(slide, "slide #{index + 1}") }
+      about_count = slides.count { |slide| slide.is_a?(Hash) && slide.key?('about') }
+      error("expected exactly one slide with 'about: true', found #{about_count}") unless about_count == 1
     end
 
     private
 
-    def check_home(home)
-      check_fields(home, home.data, HOME_FIELDS, [], 'front matter')
-      error(home, "'roles' must be a non-empty list") unless non_empty_list?(home.data['roles'])
-
-      logos = home.data['logos']
-      error(home, "'logos' must be a non-empty list") unless non_empty_list?(logos)
+    def check_logos(logos)
+      error("'logos' must be a non-empty list") unless non_empty_list?(logos)
       logos.each_with_index do |logo, index|
-        check_fields(home, logo, LOGO_FIELDS, [], "logo #{index + 1}")
+        check_fields(logo, LOGO_FIELDS, [], "logo #{index + 1}")
         path = File.join(@site.source, LOGO_DIR, logo['file'])
-        error(home, "logo '#{logo['file']}' not found at #{path}") unless File.file?(path)
+        error("logo '#{logo['file']}' not found at #{path}") unless File.file?(path)
       end
-
-      groups = home.data['groups']
-      error(home, "'groups' must be a non-empty list") unless non_empty_list?(groups)
-      groups.each_with_index do |group, index|
-        check_fields(home, group, GROUP_FIELDS, [], "group #{index + 1}")
-        error(home, "group '#{group['name']}': 'slides' must be a non-empty list of slugs") unless non_empty_list?(group['slides'])
-      end
-
-      slugs = groups.flat_map { |group| group['slides'] }
-      duplicates = slugs.tally.select { |_, count| count > 1 }.keys
-      error(home, "slide(s) listed more than once: #{duplicates.join(', ')}") unless duplicates.empty?
-      slugs
     end
 
-    def check_slide(page)
-      check_fields(page, page.data, SLIDE_REQUIRED_FIELDS, SLIDE_OPTIONAL_FIELDS, 'front matter')
+    def check_slide(slide, where)
+      error("#{where}: expected a mapping of fields, got #{slide.inspect}") unless slide.is_a?(Hash)
 
-      bib, title = page.data.values_at('bib', 'title')
-      error(page, "set exactly one of 'bib' (a papers.bib key) and 'title'") unless bib.nil? ^ title.nil?
-      error(page, "bib '#{bib}' is not an entry in #{@bib_path}") if bib && !@bibliography.key?(bib)
-      error(page, "'venue' comes from papers.bib when 'bib' is set") if bib && page.data.key?('venue')
+      if slide.key?('about')
+        check_fields(slide, ABOUT_SLIDE_FIELDS, [], where)
+        error("#{where}: 'about' must be true") unless slide['about'] == true
+        return
+      end
 
-      slides = page.data['slides']
-      error(page, "'slides' must be a non-empty list") unless non_empty_list?(slides)
-      slides.each_with_index do |slide, index|
-        where = "slide #{index + 1}"
-        error(page, "#{where}: expected a mapping of fields, got #{slide.inspect}") unless slide.is_a?(Hash)
-
-        if slide.key?('video')
-          check_fields(page, slide, VIDEO_SLIDE_FIELDS, [], where)
-          check_media(page, where, slide['video'], slide['poster'])
-        elsif slide.key?('image')
-          check_image_slide(page, where, slide)
-        else
-          error(page, "#{where}: set either 'video' (with 'poster') or 'image'")
+      check_fields(slide, PROJECTS_SLIDE_FIELDS, [], where)
+      projects = slide['projects']
+      error("#{where}: 'projects' must be a non-empty list") unless non_empty_list?(projects)
+      projects.each_with_index do |project, index|
+        project_where = "#{where} ('#{slide['title']}'), project #{index + 1}"
+        check_fields(project, PROJECT_REQUIRED_FIELDS, PROJECT_OPTIONAL_FIELDS, project_where)
+        check_paper(project['bib'], project_where)
+        error("#{project_where}: first_author must be true when set") if project.key?('first_author') && project['first_author'] != true
+        %w[video poster].each do |field|
+          path = File.join(@site.source, MEDIA_DIR, project[field].to_s)
+          error("#{project_where}: #{field} '#{project[field]}' not found at #{path}") unless File.file?(path)
         end
       end
     end
 
-    def check_image_slide(page, where, slide)
-      check_fields(page, slide, IMAGE_SLIDE_REQUIRED_FIELDS, IMAGE_SLIDE_OPTIONAL_FIELDS, where)
-      check_media(page, where, slide['image'])
-      error(page, "#{where}: ratio '#{slide['ratio']}' must look like '16 / 9'") unless RATIO.match?(slide['ratio'].to_s)
-      %w[background ink].select { |key| slide.key?(key) }.each do |key|
-        error(page, "#{where}: #{key} '#{slide[key]}' must be a #rrggbb color") unless COLOR.match?(slide[key].to_s)
-      end
-      return unless slide.key?('videos')
+    def check_paper(key, where)
+      paper = @site.data.fetch('papers').fetch(key.to_s) { error("#{where}: bib '#{key}' is not an entry in the scholar bibliography") }
+      missing = PAPER_FIELDS.reject { |field| paper[field].to_s.strip.length.positive? }
+      error("#{where}: bib entry '#{key}' has no #{missing.join(' or ')}, which the slide shows") unless missing.empty?
+      return unless paper.key?('website') && !URL.match?(paper['website'])
 
-      error(page, "#{where}: 'videos' must be a non-empty list") unless non_empty_list?(slide['videos'])
-      slide['videos'].each_with_index do |clip, index|
-        clip_where = "#{where}, video #{index + 1}"
-        check_fields(page, clip, CLIP_REQUIRED_FIELDS, CLIP_OPTIONAL_FIELDS, clip_where)
-        check_media(page, clip_where, clip['file'])
-        error(page, "#{clip_where}: box must be [left, top, width, height] in percent") unless numbers?(clip['box'], 4)
-        if clip.key?('radius') && !numbers?(clip['radius'], 2)
-          error(page, "#{clip_where}: radius must be [horizontal, vertical] in percent")
-        end
-        next unless clip.key?('outline')
-
-        color, width = clip['outline']
-        unless clip['outline'].is_a?(Array) && clip['outline'].size == 2 && COLOR.match?(color.to_s) && width.is_a?(Numeric)
-          error(page, "#{clip_where}: outline must be [#rrggbb, width in percent of the slide width]")
-        end
-      end
+      error("#{where}: bib entry '#{key}' has website '#{paper['website']}', which is not an http(s) URL")
     end
 
-    def check_media(page, where, *files)
-      files.each do |file|
-        path = File.join(@site.source, MEDIA_DIR, file.to_s)
-        error(page, "#{where}: '#{file}' not found at #{path}") unless File.file?(path)
-      end
-    end
-
-    def numbers?(value, count)
-      value.is_a?(Array) && value.size == count && value.all?(Numeric)
-    end
-
-    def check_fields(page, fields, required, optional, where)
-      error(page, "#{where}: expected a mapping of fields, got #{fields.inspect}") unless fields.is_a?(Hash)
+    def check_fields(fields, required, optional, where)
+      error("#{where}: expected a mapping of fields, got #{fields.inspect}") unless fields.is_a?(Hash)
 
       unknown = fields.keys - required - optional
       unless unknown.empty?
-        error(page, "#{where}: unknown field(s) #{unknown.join(', ')}; allowed fields: #{(required + optional).join(', ')}")
+        error("#{where}: unknown field(s) #{unknown.join(', ')}; allowed fields: #{(required + optional).join(', ')}")
       end
 
       blank = (required | (fields.keys & optional)).select { |field| fields[field].to_s.strip.empty? }
-      error(page, "#{where}: missing or blank field(s) #{blank.join(', ')}") unless blank.empty?
-      error(page, "set 'sitemap: false' to keep the hidden page out of the sitemap") if fields.key?('sitemap') && fields['sitemap'] != false
+      error("#{where}: missing or blank field(s) #{blank.join(', ')}") unless blank.empty?
     end
 
     def non_empty_list?(value)
       value.is_a?(Array) && !value.empty?
     end
 
-    def error(page, message)
-      raise Errors::FatalException, "#{page.path}: #{message}"
+    def error(message)
+      raise Errors::FatalException, "#{@page.path}: #{message}"
     end
   end
 end
